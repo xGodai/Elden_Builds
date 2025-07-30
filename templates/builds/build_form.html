@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
   <h2>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Build</h2>
-  <div class="form-group">
-  <label for="category">Category</label>
-  {{ form.category }}
-</div>
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
