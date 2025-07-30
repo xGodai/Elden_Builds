@@ -1,0 +1,11 @@
+<h2>All Elden Ring Builds</h2>
+{% for build in builds %}
+  <div>
+    <h3><a href="{% url 'build-detail' build.pk %}">{{ build.title }}</a></h3>
+    <p>By {{ build.user.username }}</p>
+    {% if build.image %}
+      <img src="{{ build.image.url }}" width="200">
+    {% endif %}
+  </div>
+{% endfor %}
+<a href="{% url 'build-create' %}">+ New Build</a>

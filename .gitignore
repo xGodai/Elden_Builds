@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Virtual env
+venv/
+ENV/
+env/
+
+# Django specific
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+db.sqlite3
+
+# VSCode
+.vscode/
+
+# macOS/Linux/Windows
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+env.py
+
+

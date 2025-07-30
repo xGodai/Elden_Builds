@@ -1,0 +1,13 @@
+<h2>{{ object.title }}</h2>
+<p>{{ object.description }}</p>
+<p>Weapon: {{ object.weapon }}</p>
+<p>By {{ object.user.username }}</p>
+{% if object.image %}
+  <img src="{{ object.image.url }}" width="400">
+{% endif %}
+
+{% if user == object.user %}
+  <a href="{% url 'build-update' object.pk %}">Edit</a> |
+  <a href="{% url 'build-delete' object.pk %}">Delete</a>
+{% endif %}
+<a href="{% url 'build-list' %}">Back</a>
