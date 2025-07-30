@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'builds',
     'users',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +128,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'build-list'
 LOGOUT_REDIRECT_URL = 'login'
 

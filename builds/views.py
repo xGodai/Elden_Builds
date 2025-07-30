@@ -6,8 +6,7 @@ from django.urls import reverse_lazy
 from .models import Build
 
 # Create your views here.
-def home(request):
-    return HttpResponse("Elden Ring Builds Homepage")
+
 
 class BuildListView(ListView):
     model = Build
@@ -40,7 +39,7 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         build = self.get_object()
         return self.request.user == build.user
-    
+
 class BuildDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Build
     template_name = 'builds/build_confirm_delete.html'
