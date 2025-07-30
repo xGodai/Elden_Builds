@@ -11,6 +11,22 @@
   {% endif %}
   <p>By {{ object.user.username }}</p>
 
+  <p><strong>Likes:</strong> {{ object.total_likes }}</p>
+
+{% if user.is_authenticated %}
+    <form action="{% url 'build-like' object.pk %}" method="post">
+        {% csrf_token %}
+        {% if user in object.liked_by.all %}
+            <button type="submit">Unlike</button>
+        {% else %}
+            <button type="submit">Like</button>
+        {% endif %}
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Log in</a> to like this build.</p>
+{% endif %}
+
+
   {% if user == object.user %}
     <a href="{% url 'build-update' object.pk %}">Edit</a>
     <a href="{% url 'build-delete' object.pk %}">Delete</a>

@@ -1,15 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h1>All Builds</h1>
-  {% if user.is_authenticated %}
-    <a href="{% url 'build-create' %}">+ Create New Build</a>
-  {% endif %}
-  <ul>
-    {% for build in builds %}
-      <li>
-        <a href="{% url 'build-detail' build.pk %}">{{ build.title }}</a> by {{ build.user.username }}
-      </li>
-    {% endfor %}
-  </ul>
-{% endblock %}
+<h1>All Builds</h1>
 
+<form method="get" class="filter-bar">
+    <select name="category">
+        <option value="">All Types</option>
+        <option value="PVP">PvP</option>
+        <option value="PVE">PvE</option>
+        <option value="BOTH">Both</option>
+    </select>
+
+    <select name="sort">
+        <option value="new">Newest</option>
+        <option value="popular">Most Liked</option>
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+
+{% if user.is_authenticated %}
+<a href="{% url 'build-create' %}">+ Create New Build</a>
+{% endif %}
+<ul>
+    {% for build in builds %}
+    <li>
+        <a href="{% url 'build-detail' build.pk %}">{{ build.title }}</a> by {{ build.user.username }}
+        <p><strong>Category:</strong> {{ build.get_category_display }}</p>
+        <p><strong>Likes:</strong> {{ build.total_likes }}</p>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
