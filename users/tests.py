@@ -140,6 +140,29 @@ class UserProfileTestCase(TestCase):
         user = form.save()
         self.assertTrue(hasattr(user, 'profile'))
 
+    def test_username_length_validation(self):
+        """Test that username is limited to 25 characters"""
+        # Test valid username (25 characters)
+        valid_form_data = {
+            'username': 'a' * 25,  # exactly 25 characters
+            'email': 'valid@example.com',
+            'password1': 'complexpassword123',
+            'password2': 'complexpassword123'
+        }
+        valid_form = UserRegistrationForm(data=valid_form_data)
+        self.assertTrue(valid_form.is_valid(), "25-character username should be valid")
+        
+        # Test invalid username (26 characters - too long)
+        invalid_form_data = {
+            'username': 'a' * 26,  # 26 characters - too long
+            'email': 'invalid@example.com',
+            'password1': 'complexpassword123',
+            'password2': 'complexpassword123'
+        }
+        invalid_form = UserRegistrationForm(data=invalid_form_data)
+        self.assertFalse(invalid_form.is_valid(), "26-character username should be invalid")
+        self.assertIn('username', invalid_form.errors)
+
     def test_get_profile_picture_url(self):
         """Test profile picture URL generation"""
         # Should return placeholder URL when no picture

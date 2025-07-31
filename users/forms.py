@@ -6,6 +6,15 @@ from .models import UserProfile
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
+    username = forms.CharField(
+        max_length=25,
+        help_text='Username must be 25 characters or fewer. Letters, digits and @/./+/-/_ only.',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Choose a username',
+            'maxlength': '25'
+        })
+    )
 
     class Meta:
         model = User
@@ -13,10 +22,6 @@ class UserRegistrationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Choose a username'
-        })
         self.fields['email'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'Enter your email address'

@@ -164,3 +164,49 @@ class LogoutConfirmationTestCase(TestCase):
         self.assertNotContains(response, 'logoutModal')
         self.assertNotContains(response, 'data-bs-toggle="modal"')
         self.assertNotContains(response, 'Confirm Logout')
+
+
+class FormValidationTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_username_length_validation_registration(self):
+        """Test that username is limited to 25 characters in registration"""
+        from .forms import CustomUserCreationForm
+        
+        # Test valid username (25 characters)
+        valid_form_data = {
+            'username': 'a' * 25,  # exactly 25 characters
+            'password1': 'complexpassword123',
+            'password2': 'complexpassword123'
+        }
+        valid_form = CustomUserCreationForm(data=valid_form_data)
+        self.assertTrue(valid_form.is_valid(), "25-character username should be valid")
+        
+        # Test invalid username (26 characters - too long)
+        invalid_form_data = {
+            'username': 'a' * 26,  # 26 characters - too long
+            'password1': 'complexpassword123',
+            'password2': 'complexpassword123'
+        }
+        invalid_form = CustomUserCreationForm(data=invalid_form_data)
+        self.assertFalse(invalid_form.is_valid(), "26-character username should be invalid")
+        self.assertIn('username', invalid_form.errors)
+
+    def test_username_length_validation_login(self):
+        """Test that login form accepts usernames up to 25 characters"""
+        from .forms import CustomAuthenticationForm
+        
+        # Create a user with 25-character username
+        username_25 = 'a' * 25
+        User.objects.create_user(username=username_25, password='testpass123')
+        
+        # Test that login form accepts this username
+        form_data = {
+            'username': username_25,
+            'password': 'testpass123'
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        # Note: form.is_valid() might fail due to authentication, but username field should not have length errors
+        form.full_clean()
+        self.assertNotIn('username', form.errors, "25-character username should not have length validation errors")
