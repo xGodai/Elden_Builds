@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from .models import Build
-from django.db.models import Count
+from .models import Build, Comment, CommentVote
+from .forms import CommentForm
+from django.db.models import Count, Q, F
+from django.contrib import messages
 
 # Create your views here.
 
@@ -31,6 +33,38 @@ class BuildListView(ListView):
 class BuildDetailView(DetailView):
     model = Build
     template_name = 'builds/build_detail.html'  # <app>/<model>_detail.html
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get sort parameter
+        sort = self.request.GET.get('comment_sort', 'newest')
+        
+        # Get comments with different sorting options
+        comments = self.object.comments.all()
+        
+        if sort == 'popular':
+            # Sort by vote score (upvotes - downvotes)
+            comments = comments.annotate(
+                upvote_count=Count('votes', filter=Q(votes__vote_type='upvote')),
+                downvote_count=Count('votes', filter=Q(votes__vote_type='downvote'))
+            ).annotate(
+                vote_score=F('upvote_count') - F('downvote_count')
+            ).order_by('-vote_score', '-created_at')
+        elif sort == 'oldest':
+            comments = comments.order_by('created_at')
+        else:  # newest (default)
+            comments = comments.order_by('-created_at')
+        
+        # Add user vote information to each comment
+        if self.request.user.is_authenticated:
+            for comment in comments:
+                comment.current_user_vote = comment.user_vote(self.request.user)
+        
+        context['comments'] = comments
+        context['comment_form'] = CommentForm()
+        context['current_sort'] = sort
+        return context
 
 class BuildCreateView(LoginRequiredMixin, CreateView):
     model = Build
@@ -74,3 +108,91 @@ class BuildLikeView(LoginRequiredMixin, View):
             build.liked_by.add(request.user)
         
         return redirect('build-detail', pk=pk)
+
+
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        build = get_object_or_404(Build, pk=pk)
+        form = CommentForm(request.POST)
+        
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.build = build
+            comment.user = request.user
+            comment.save()
+            messages.success(request, 'Your comment has been added successfully!')
+        else:
+            messages.error(request, 'There was an error with your comment. Please try again.')
+        
+        return redirect('build-detail', pk=pk)
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'builds/comment_form.html'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.user
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your comment has been updated successfully!')
+        return super().form_valid(form)
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'builds/comment_confirm_delete.html'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.user
+
+    def get_success_url(self):
+        messages.success(self.request, 'Your comment has been deleted successfully!')
+        return reverse_lazy('build-detail', kwargs={'pk': self.object.build.pk})
+
+
+class CommentVoteView(LoginRequiredMixin, View):
+    def post(self, request, pk, vote_type):
+        comment = get_object_or_404(Comment, pk=pk)
+        
+        # Validate vote_type
+        if vote_type not in ['upvote', 'downvote']:
+            return JsonResponse({'error': 'Invalid vote type'}, status=400)
+        
+        # Check if user already voted
+        try:
+            existing_vote = CommentVote.objects.get(comment=comment, user=request.user)
+            if existing_vote.vote_type == vote_type:
+                # Remove vote if clicking the same vote type
+                existing_vote.delete()
+                action = 'removed'
+            else:
+                # Change vote type
+                existing_vote.vote_type = vote_type
+                existing_vote.save()
+                action = 'changed'
+        except CommentVote.DoesNotExist:
+            # Create new vote
+            CommentVote.objects.create(
+                comment=comment,
+                user=request.user,
+                vote_type=vote_type
+            )
+            action = 'added'
+        
+        # Return JSON response for AJAX requests
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'action': action,
+                'upvotes': comment.total_upvotes(),
+                'downvotes': comment.total_downvotes(),
+                'score': comment.vote_score(),
+                'user_vote': comment.user_vote(request.user)
+            })
+        
+        # Redirect for non-AJAX requests
+        return redirect('build-detail', pk=comment.build.pk)

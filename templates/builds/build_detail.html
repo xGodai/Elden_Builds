@@ -1,35 +1,199 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="container">
   <h2>{{ object.title }}</h2>
   <p>{{ object.description }}</p>
-  <p>Weapons: {{ object.weapons }}</p>
-  <p>Armor: {{ object.armor }}</p>
-  <p>Talismans: {{ object.talismans }}</p>
-  <p>Spells: {{ object.spells }}</p>
+  <p><strong>Weapons:</strong> {{ object.weapons }}</p>
+  <p><strong>Armor:</strong> {{ object.armor }}</p>
+  <p><strong>Talismans:</strong> {{ object.talismans }}</p>
+  <p><strong>Spells:</strong> {{ object.spells }}</p>
   {% if object.image %}
-    <img src="{{ object.image.url }}" alt="{{ object.title }}">
+    <img src="{{ object.image.url }}" alt="{{ object.title }}" class="img-fluid">
   {% endif %}
-  <p>By {{ object.user.username }}</p>
+  <p><strong>Created by:</strong> {{ object.user.username }}</p>
+  <p><strong>Category:</strong> {{ object.get_category_display }}</p>
+  <p><strong>Created:</strong> {{ object.created_at|date:"M d, Y" }}</p>
 
   <p><strong>Likes:</strong> {{ object.total_likes }}</p>
 
-{% if user.is_authenticated %}
-    <form action="{% url 'build-like' object.pk %}" method="post">
-        {% csrf_token %}
-        {% if user in object.liked_by.all %}
-            <button type="submit">Unlike</button>
-        {% else %}
-            <button type="submit">Like</button>
-        {% endif %}
-    </form>
-{% else %}
-    <p><a href="{% url 'login' %}">Log in</a> to like this build.</p>
-{% endif %}
-
+  {% if user.is_authenticated %}
+      <form action="{% url 'build-like' object.pk %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          {% if user in object.liked_by.all %}
+              <button type="submit" class="btn btn-outline-danger btn-sm">Unlike</button>
+          {% else %}
+              <button type="submit" class="btn btn-outline-primary btn-sm">Like</button>
+          {% endif %}
+      </form>
+  {% else %}
+      <p><a href="{% url 'login' %}">Log in</a> to like this build.</p>
+  {% endif %}
 
   {% if user == object.user %}
-    <a href="{% url 'build-update' object.pk %}">Edit</a>
-    <a href="{% url 'build-delete' object.pk %}">Delete</a>
+    <div class="mt-3">
+      <a href="{% url 'build-update' object.pk %}" class="btn btn-warning">Edit</a>
+      <a href="{% url 'build-delete' object.pk %}" class="btn btn-danger">Delete</a>
+    </div>
   {% endif %}
+
+  <hr>
+
+  <!-- Comments Section -->
+  <div class="comments-section mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Comments ({{ comments.count }})</h4>
+      
+      <!-- Comment Sorting -->
+      <div class="comment-sort">
+        <label for="comment-sort-select" class="form-label mb-0 me-2">Sort by:</label>
+        <select id="comment-sort-select" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+          <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
+          <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+          <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Most popular</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Add Comment Form -->
+    {% if user.is_authenticated %}
+      <div class="add-comment mb-4">
+        <h5>Add a Comment</h5>
+        <form action="{% url 'comment-create' object.pk %}" method="post">
+          {% csrf_token %}
+          {{ comment_form.content }}
+          <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+        </form>
+      </div>
+    {% else %}
+      <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+    {% endif %}
+
+    <!-- Display Comments -->
+    {% if comments %}
+      <div class="comments-list">
+        {% for comment in comments %}
+          <div class="comment mb-3 p-3 border rounded">
+            <div class="comment-header d-flex justify-content-between align-items-start">
+              <div>
+                <strong>{{ comment.user.username }}</strong>
+                <small class="text-muted">
+                  {{ comment.created_at|date:"M d, Y \a\t H:i" }}
+                  {% if comment.updated_at != comment.created_at %}
+                    (edited {{ comment.updated_at|date:"M d, Y \a\t H:i" }})
+                  {% endif %}
+                </small>
+              </div>
+              {% if user == comment.user %}
+                <div class="comment-actions">
+                  <a href="{% url 'comment-update' comment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div>
+              {% endif %}
+            </div>
+            <div class="comment-content mt-2">
+              {{ comment.content|linebreaks }}
+            </div>
+            
+            <!-- Voting System -->
+            <div class="comment-votes mt-2 d-flex align-items-center">
+              {% if user.is_authenticated %}
+                <div class="vote-buttons me-3">
+                  <form method="post" action="{% url 'comment-vote' comment.pk 'upvote' %}" class="d-inline vote-form" data-comment-id="{{ comment.pk }}" data-vote-type="upvote">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm {% if comment.current_user_vote == 'upvote' %}btn-success{% else %}btn-outline-success{% endif %} upvote-btn">
+                      ▲ <span class="upvote-count">{{ comment.total_upvotes }}</span>
+                    </button>
+                  </form>
+                  
+                  <form method="post" action="{% url 'comment-vote' comment.pk 'downvote' %}" class="d-inline vote-form" data-comment-id="{{ comment.pk }}" data-vote-type="downvote">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm {% if comment.current_user_vote == 'downvote' %}btn-danger{% else %}btn-outline-danger{% endif %} downvote-btn">
+                      ▼ <span class="downvote-count">{{ comment.total_downvotes }}</span>
+                    </button>
+                  </form>
+                </div>
+              {% else %}
+                <div class="vote-display me-3">
+                  <span class="btn btn-sm btn-outline-success disabled">▲ {{ comment.total_upvotes }}</span>
+                  <span class="btn btn-sm btn-outline-danger disabled">▼ {{ comment.total_downvotes }}</span>
+                </div>
+              {% endif %}
+              
+              <div class="vote-score">
+                <small class="text-muted">
+                  Score: <strong class="score-value">{{ comment.vote_score }}</strong>
+                </small>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted">No comments yet. Be the first to comment!</p>
+    {% endif %}
+  </div>
+
+  <!-- JavaScript for AJAX voting and comment sorting -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Voting functionality
+      const voteForms = document.querySelectorAll('.vote-form');
+      
+      voteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const commentId = this.dataset.commentId;
+          const voteType = this.dataset.voteType;
+          const formData = new FormData(this);
+          
+          fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Update vote counts
+              const comment = document.querySelector(`[data-comment-id="${commentId}"]`).closest('.comment');
+              const upvoteCount = comment.querySelector('.upvote-count');
+              const downvoteCount = comment.querySelector('.downvote-count');
+              const scoreValue = comment.querySelector('.score-value');
+              const upvoteBtn = comment.querySelector('.upvote-btn');
+              const downvoteBtn = comment.querySelector('.downvote-btn');
+              
+              upvoteCount.textContent = data.upvotes;
+              downvoteCount.textContent = data.downvotes;
+              scoreValue.textContent = data.score;
+              
+              // Update button styles based on user vote
+              upvoteBtn.className = 'btn btn-sm upvote-btn ' + 
+                (data.user_vote === 'upvote' ? 'btn-success' : 'btn-outline-success');
+              downvoteBtn.className = 'btn btn-sm downvote-btn ' + 
+                (data.user_vote === 'downvote' ? 'btn-danger' : 'btn-outline-danger');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        });
+      });
+
+      // Comment sorting functionality
+      const sortSelect = document.getElementById('comment-sort-select');
+      if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+          const currentUrl = new URL(window.location);
+          currentUrl.searchParams.set('comment_sort', this.value);
+          window.location.href = currentUrl.toString();
+        });
+      }
+    });
+  </script>
+</div>
 {% endblock %}
 
