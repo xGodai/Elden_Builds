@@ -6,6 +6,7 @@ from .views import (
     BuildCreateView,
     BuildUpdateView,
     BuildDeleteView,
+    BuildLikeView,
 )
 
 urlpatterns = [
@@ -14,5 +15,5 @@ urlpatterns = [
     path('build/new/', BuildCreateView.as_view(), name='build-create'),
     path('build/<int:pk>/edit/', BuildUpdateView.as_view(), name='build-update'),
     path('build/<int:pk>/delete/', BuildDeleteView.as_view(), name='build-delete'),
-    path('build/<int:pk>/like/', views.like_build, name='build-like'),
+    path('build/<int:pk>/like/', BuildLikeView.as_view(), name='build-like'),
 ]

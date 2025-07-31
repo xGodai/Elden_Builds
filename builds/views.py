@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from .models import Build
 from django.db.models import Count
@@ -12,7 +11,7 @@ from django.db.models import Count
 
 class BuildListView(ListView):
     model = Build
-    template_name = 'builds/build_list.html'  # <app>/<model>_<viewtype>.html
+    template_name = 'builds/build_list.html'  
     context_object_name = 'builds'
     
     def get_queryset(self):
@@ -65,13 +64,13 @@ class BuildDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == build.user
 
 
-@login_required
-def like_build(request, pk):
-    build = get_object_or_404(Build, pk=pk)
-    
-    if request.user in build.liked_by.all():
-        build.liked_by.remove(request.user)
-    else:
-        build.liked_by.add(request.user)
-    
-    return redirect('build-detail', pk=pk)
+class BuildLikeView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        build = get_object_or_404(Build, pk=pk)
+        
+        if request.user in build.liked_by.all():
+            build.liked_by.remove(request.user)
+        else:
+            build.liked_by.add(request.user)
+        
+        return redirect('build-detail', pk=pk)
