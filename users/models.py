@@ -17,6 +17,13 @@ class UserProfile(models.Model):
     )
     location = models.CharField(max_length=100, blank=True, help_text="Your location")
     favorite_weapon = models.CharField(max_length=100, blank=True, help_text="Your favorite Elden Ring weapon")
+    
+    # Notification preferences
+    notify_on_build_like = models.BooleanField(default=True, help_text="Receive notifications when someone likes your build")
+    notify_on_build_comment = models.BooleanField(default=True, help_text="Receive notifications when someone comments on your build")
+    notify_on_comment_reply = models.BooleanField(default=True, help_text="Receive notifications when someone replies to your comment")
+    notify_on_comment_vote = models.BooleanField(default=False, help_text="Receive notifications when someone votes on your comment")
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -71,3 +78,46 @@ class UserProfile(models.Model):
 
     def total_comments(self):
         return self.user.comment_set.count()
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('build_like', 'Build Like'),
+        ('build_comment', 'Build Comment'),
+        ('comment_reply', 'Comment Reply'),
+        ('comment_vote', 'Comment Vote'),
+    ]
+    
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications')
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    
+    # Generic fields for different notification types
+    build = models.ForeignKey('builds.Build', on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey('builds.Comment', on_delete=models.CASCADE, null=True, blank=True)
+    
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['recipient', '-created_at']),
+            models.Index(fields=['recipient', 'is_read']),
+        ]
+    
+    def __str__(self):
+        return f"Notification for {self.recipient.username}: {self.message[:50]}"
+    
+    def mark_as_read(self):
+        self.is_read = True
+        self.save()
+    
+    def get_absolute_url(self):
+        """Return the URL this notification links to"""
+        if self.build:
+            return self.build.get_absolute_url()
+        elif self.comment:
+            return self.comment.build.get_absolute_url()
+        return '#'

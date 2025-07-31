@@ -7,6 +7,7 @@ from .models import Build, Comment, CommentVote
 from .forms import CommentForm
 from django.db.models import Count, Q, F
 from django.contrib import messages
+from users.notifications import NotificationService
 
 # Create your views here.
 
@@ -119,6 +120,8 @@ class BuildLikeView(LoginRequiredMixin, View):
             build.liked_by.remove(request.user)
         else:
             build.liked_by.add(request.user)
+            # Create notification for build like
+            NotificationService.create_build_like_notification(build, request.user)
         
         return redirect('build-detail', pk=pk)
 
@@ -133,6 +136,10 @@ class CommentCreateView(LoginRequiredMixin, View):
             comment.build = build
             comment.user = request.user
             comment.save()
+            
+            # Create notification for build comment
+            NotificationService.create_build_comment_notification(build, request.user, comment)
+            
             messages.success(request, 'Your comment has been added successfully!')
         else:
             messages.error(request, 'There was an error with your comment. Please try again.')
@@ -187,6 +194,8 @@ class CommentVoteView(LoginRequiredMixin, View):
                 existing_vote.vote_type = vote_type
                 existing_vote.save()
                 action = 'changed'
+                # Create notification for vote change
+                NotificationService.create_comment_vote_notification(comment, request.user, vote_type)
         except CommentVote.DoesNotExist:
             # Create new vote
             CommentVote.objects.create(
@@ -195,6 +204,8 @@ class CommentVoteView(LoginRequiredMixin, View):
                 vote_type=vote_type
             )
             action = 'added'
+            # Create notification for new vote
+            NotificationService.create_comment_vote_notification(comment, request.user, vote_type)
         
         # Return JSON response for AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

@@ -111,6 +111,10 @@
                             <li><a class="dropdown-item" href="{% url 'user-profile' user.username %}">
                                 <i class="bi bi-person me-2"></i>My Profile
                             </a></li>
+                            <li><a class="dropdown-item" href="{% url 'notification-list' %}">
+                                <i class="bi bi-bell me-2"></i>Notifications
+                                <span class="badge bg-danger ms-1 notification-badge" style="display: none;"></span>
+                            </a></li>
                             <li><a class="dropdown-item" href="{% url 'profile-edit' %}">
                                 <i class="bi bi-gear me-2"></i>Edit Profile
                             </a></li>

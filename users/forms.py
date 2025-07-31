@@ -55,7 +55,10 @@ class UserUpdateForm(forms.ModelForm):
 class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['display_name', 'bio', 'profile_picture', 'location', 'favorite_weapon']
+        fields = [
+            'display_name', 'bio', 'profile_picture', 'location', 'favorite_weapon',
+            'notify_on_build_like', 'notify_on_build_comment', 'notify_on_comment_reply', 'notify_on_comment_vote'
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -80,3 +83,9 @@ class UserProfileUpdateForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Your favorite Elden Ring weapon'
         })
+        
+        # Notification preferences styling
+        self.fields['notify_on_build_like'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['notify_on_build_comment'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['notify_on_comment_reply'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['notify_on_comment_vote'].widget.attrs.update({'class': 'form-check-input'})
