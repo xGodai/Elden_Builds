@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <!-- Profile Header -->
+    <div class="col-md-12 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+              <img src="{{ user_profile.get_profile_picture_url }}" 
+                   alt="{{ profile_user.username }}'s Profile Picture" 
+                   class="rounded-circle img-fluid profile-picture"
+                   style="width: 150px; height: 150px; object-fit: cover;">
+            </div>
+            <div class="col-md-6">
+              <h2>{{ user_profile.get_display_name }}</h2>
+              <p class="text-muted">@{{ profile_user.username }}</p>
+              {% if profile_user.first_name or profile_user.last_name %}
+                <p><strong>{{ profile_user.first_name }} {{ profile_user.last_name }}</strong></p>
+              {% endif %}
+              {% if user_profile.bio %}
+                <p class="mt-2">{{ user_profile.bio }}</p>
+              {% endif %}
+              
+              <div class="row mt-3">
+                {% if user_profile.location %}
+                  <div class="col-sm-6">
+                    <small class="text-muted">📍 {{ user_profile.location }}</small>
+                  </div>
+                {% endif %}
+                {% if user_profile.favorite_weapon %}
+                  <div class="col-sm-6">
+                    <small class="text-muted">⚔️ {{ user_profile.favorite_weapon }}</small>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="row mt-2">
+                <div class="col-sm-12">
+                  <small class="text-muted">Joined {{ profile_user.date_joined|date:"M Y" }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div class="row">
+                  <div class="col-4">
+                    <h5 class="mb-0">{{ user_profile.total_builds }}</h5>
+                    <small class="text-muted">Builds</small>
+                  </div>
+                  <div class="col-4">
+                    <h5 class="mb-0">{{ user_profile.total_liked_builds }}</h5>
+                    <small class="text-muted">Likes</small>
+                  </div>
+                  <div class="col-4">
+                    <h5 class="mb-0">{{ user_profile.total_comments }}</h5>
+                    <small class="text-muted">Comments</small>
+                  </div>
+                </div>
+                
+                {% if is_own_profile %}
+                  <div class="mt-3">
+                    <a href="{% url 'profile-edit' %}" class="btn btn-primary btn-sm">Edit Profile</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Tabs -->
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="nav nav-tabs" id="profileTabs">
+        <li class="nav-item">
+          <a class="nav-link {% if current_tab == 'builds' %}active{% endif %}" 
+             href="{% url 'user-profile' profile_user.username %}?tab=builds">
+            Builds ({{ user_builds.count }})
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_tab == 'liked' %}active{% endif %}" 
+             href="{% url 'user-profile' profile_user.username %}?tab=liked">
+            Liked Builds ({{ liked_builds.count }})
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_tab == 'comments' %}active{% endif %}" 
+             href="{% url 'user-profile' profile_user.username %}?tab=comments">
+            Comments ({{ user_comments.count }})
+          </a>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-4">
+        <!-- User's Builds Tab -->
+        {% if current_tab == 'builds' %}
+          <div class="tab-pane fade show active">
+            {% if user_builds %}
+              <div class="row">
+                {% for build in user_builds %}
+                  <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                      {% if build.image %}
+                        <img src="{{ build.image.url }}" class="card-img-top" alt="{{ build.title }}" style="height: 200px; object-fit: cover;">
+                      {% endif %}
+                      
+                      <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                          <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">{{ build.title }}</a>
+                        </h5>
+                        
+                        <p class="card-text text-muted">{{ build.description|truncatewords:15 }}</p>
+                        
+                        <div class="mt-auto">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-secondary">{{ build.get_category_display }}</span>
+                            <small class="text-muted">{{ build.created_at|date:"M d, Y" }}</small>
+                          </div>
+                          
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div class="build-stats">
+                              <small class="text-muted">
+                                <i class="text-danger">❤</i> {{ build.total_likes }}
+                                <span class="ms-2">
+                                  <i class="text-primary">💬</i> {{ build.comments.count }}
+                                </span>
+                              </small>
+                            </div>
+                            {% if is_own_profile %}
+                              <div class="build-actions">
+                                <a href="{% url 'build-update' build.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-center py-5">
+                <h4 class="text-muted">No builds yet</h4>
+                {% if is_own_profile %}
+                  <p class="text-muted">Create your first build to get started!</p>
+                  <a href="{% url 'build-create' %}" class="btn btn-primary">Create New Build</a>
+                {% else %}
+                  <p class="text-muted">{{ profile_user.username }} hasn't created any builds yet.</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <!-- Liked Builds Tab -->
+        {% if current_tab == 'liked' %}
+          <div class="tab-pane fade show active">
+            {% if liked_builds %}
+              <div class="row">
+                {% for build in liked_builds %}
+                  <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                      {% if build.image %}
+                        <img src="{{ build.image.url }}" class="card-img-top" alt="{{ build.title }}" style="height: 200px; object-fit: cover;">
+                      {% endif %}
+                      
+                      <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                          <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">{{ build.title }}</a>
+                        </h5>
+                        
+                        <p class="card-text text-muted">{{ build.description|truncatewords:15 }}</p>
+                        
+                        <div class="mt-auto">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                              <img src="{{ build.user.profile.get_profile_picture_url }}" 
+                                   alt="{{ build.user.username }}'s Profile" 
+                                   class="rounded-circle me-2"
+                                   style="width: 20px; height: 20px; object-fit: cover;">
+                              <small class="text-muted">By 
+                                <a href="{% url 'user-profile' build.user.username %}" class="text-decoration-none">
+                                  {{ build.user.profile.get_display_name }}
+                                </a>
+                              </small>
+                            </div>
+                            <span class="badge bg-secondary">{{ build.get_category_display }}</span>
+                          </div>
+                          
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div class="build-stats">
+                              <small class="text-muted">
+                                <i class="text-danger">❤</i> {{ build.total_likes }}
+                                <span class="ms-2">
+                                  <i class="text-primary">💬</i> {{ build.comments.count }}
+                                </span>
+                              </small>
+                            </div>
+                            <small class="text-muted">{{ build.created_at|date:"M d, Y" }}</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-center py-5">
+                <h4 class="text-muted">No liked builds</h4>
+                {% if is_own_profile %}
+                  <p class="text-muted">Like some builds to see them here!</p>
+                  <a href="{% url 'build-list' %}" class="btn btn-primary">Browse Builds</a>
+                {% else %}
+                  <p class="text-muted">{{ profile_user.username }} hasn't liked any builds yet.</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <!-- Comments Tab -->
+        {% if current_tab == 'comments' %}
+          <div class="tab-pane fade show active">
+            {% if user_comments %}
+              <div class="list-group">
+                {% for comment in user_comments %}
+                  <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div class="flex-grow-1">
+                        <h6 class="mb-1">
+                          Comment on 
+                          <a href="{% url 'build-detail' comment.build.pk %}" class="text-decoration-none">
+                            {{ comment.build.title }}
+                          </a>
+                        </h6>
+                        <p class="mb-1">{{ comment.content|truncatewords:30 }}</p>
+                        <small class="text-muted">
+                          {{ comment.created_at|date:"M d, Y \a\t H:i" }}
+                          {% if comment.updated_at != comment.created_at %}
+                            (edited)
+                          {% endif %}
+                          • Score: {{ comment.vote_score }}
+                        </small>
+                      </div>
+                      {% if is_own_profile %}
+                        <div class="comment-actions">
+                          <a href="{% url 'comment-update' comment.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                          <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-center py-5">
+                <h4 class="text-muted">No comments yet</h4>
+                {% if is_own_profile %}
+                  <p class="text-muted">Start commenting on builds to see them here!</p>
+                  <a href="{% url 'build-list' %}" class="btn btn-primary">Browse Builds</a>
+                {% else %}
+                  <p class="text-muted">{{ profile_user.username }} hasn't made any comments yet.</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

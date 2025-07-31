@@ -10,7 +10,17 @@
   {% if object.image %}
     <img src="{{ object.image.url }}" alt="{{ object.title }}" class="img-fluid">
   {% endif %}
-  <p><strong>Created by:</strong> {{ object.user.username }}</p>
+  <div class="d-flex align-items-center mb-2">
+    <img src="{{ object.user.profile.get_profile_picture_url }}" 
+         alt="{{ object.user.username }}'s Profile" 
+         class="rounded-circle me-2"
+         style="width: 24px; height: 24px; object-fit: cover;">
+    <p class="mb-0"><strong>Created by:</strong> 
+      <a href="{% url 'user-profile' object.user.username %}" class="text-decoration-none">
+        {{ object.user.profile.get_display_name }}
+      </a>
+    </p>
+  </div>
   <p><strong>Category:</strong> {{ object.get_category_display }}</p>
   <p><strong>Created:</strong> {{ object.created_at|date:"M d, Y" }}</p>
 
@@ -74,14 +84,24 @@
         {% for comment in comments %}
           <div class="comment mb-3 p-3 border rounded">
             <div class="comment-header d-flex justify-content-between align-items-start">
-              <div>
-                <strong>{{ comment.user.username }}</strong>
-                <small class="text-muted">
-                  {{ comment.created_at|date:"M d, Y \a\t H:i" }}
-                  {% if comment.updated_at != comment.created_at %}
-                    (edited {{ comment.updated_at|date:"M d, Y \a\t H:i" }})
-                  {% endif %}
-                </small>
+              <div class="d-flex align-items-start">
+                <img src="{{ comment.user.profile.get_profile_picture_url }}" 
+                     alt="{{ comment.user.username }}'s Profile" 
+                     class="rounded-circle me-2"
+                     style="width: 32px; height: 32px; object-fit: cover;">
+                <div>
+                  <strong>
+                    <a href="{% url 'user-profile' comment.user.username %}" class="text-decoration-none">
+                      {{ comment.user.profile.get_display_name }}
+                    </a>
+                  </strong>
+                  <small class="text-muted d-block">
+                    {{ comment.created_at|date:"M d, Y \a\t H:i" }}
+                    {% if comment.updated_at != comment.created_at %}
+                      (edited {{ comment.updated_at|date:"M d, Y \a\t H:i" }})
+                    {% endif %}
+                  </small>
+                </div>
               </div>
               {% if user == comment.user %}
                 <div class="comment-actions">

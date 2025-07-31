@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>Edit Profile</h3>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- User Information -->
+            <h5 class="mb-3">Personal Information</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                {{ user_form.first_name }}
+                {% if user_form.first_name.errors %}
+                  <div class="text-danger">{{ user_form.first_name.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                {{ user_form.last_name }}
+                {% if user_form.last_name.errors %}
+                  <div class="text-danger">{{ user_form.last_name.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ user_form.email.id_for_label }}" class="form-label">Email Address</label>
+              {{ user_form.email }}
+              {% if user_form.email.errors %}
+                <div class="text-danger">{{ user_form.email.errors }}</div>
+              {% endif %}
+            </div>
+
+            <hr>
+
+            <!-- Profile Information -->
+            <h5 class="mb-3">Profile Information</h5>
+            <div class="mb-3">
+              <label for="{{ profile_form.display_name.id_for_label }}" class="form-label">Display Name</label>
+              {{ profile_form.display_name }}
+              <div class="form-text">This name will be shown instead of your username (optional)</div>
+              {% if profile_form.display_name.errors %}
+                <div class="text-danger">{{ profile_form.display_name.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ profile_form.bio.id_for_label }}" class="form-label">Bio</label>
+              {{ profile_form.bio }}
+              <div class="form-text">Tell others about yourself</div>
+              {% if profile_form.bio.errors %}
+                <div class="text-danger">{{ profile_form.bio.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ profile_form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+              <div class="mb-2">
+                {% if user.profile.profile_picture %}
+                  <img src="{{ user.profile.profile_picture.url }}" 
+                       alt="Current Profile Picture" 
+                       class="rounded-circle"
+                       style="width: 60px; height: 60px; object-fit: cover;">
+                  <span class="ms-2 text-muted">Current picture</span>
+                {% else %}
+                  <img src="{{ user.profile.get_profile_picture_url }}" 
+                       alt="Default Profile Picture" 
+                       class="rounded-circle"
+                       style="width: 60px; height: 60px; object-fit: cover;">
+                  <span class="ms-2 text-muted">Default picture</span>
+                {% endif %}
+              </div>
+              {{ profile_form.profile_picture }}
+              <div class="form-text">Upload a new profile picture (optional)</div>
+              {% if profile_form.profile_picture.errors %}
+                <div class="text-danger">{{ profile_form.profile_picture.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="{{ profile_form.location.id_for_label }}" class="form-label">Location</label>
+                {{ profile_form.location }}
+                {% if profile_form.location.errors %}
+                  <div class="text-danger">{{ profile_form.location.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="{{ profile_form.favorite_weapon.id_for_label }}" class="form-label">Favorite Weapon</label>
+                {{ profile_form.favorite_weapon }}
+                {% if profile_form.favorite_weapon.errors %}
+                  <div class="text-danger">{{ profile_form.favorite_weapon.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'user-profile' user.username %}" class="btn btn-secondary">Cancel</a>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
