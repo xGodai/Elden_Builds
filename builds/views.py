@@ -19,16 +19,29 @@ class BuildListView(ListView):
     def get_queryset(self):
         queryset = Build.objects.all()
         category = self.request.GET.get('category')
-        sort = self.request.GET.get('sort')
+        sort = self.request.GET.get('sort', 'newest')
 
         if category:
             queryset = queryset.filter(category=category)
+            
         if sort == 'popular':
-            queryset = queryset.annotate(like_count=Count('liked_by')).order_by('-like_count')
-        else:
+            queryset = queryset.annotate(like_count=Count('liked_by')).order_by('-like_count', '-created_at')
+        elif sort == 'oldest':
+            queryset = queryset.order_by('created_at')
+        elif sort == 'most_commented':
+            queryset = queryset.annotate(comment_count=Count('comments')).order_by('-comment_count', '-created_at')
+        elif sort == 'alphabetical':
+            queryset = queryset.order_by('title')
+        else:  # newest (default)
             queryset = queryset.order_by('-created_at')
 
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_sort'] = self.request.GET.get('sort', 'newest')
+        context['current_category'] = self.request.GET.get('category', '')
+        return context
 
 class BuildDetailView(DetailView):
     model = Build

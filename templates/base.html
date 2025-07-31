@@ -22,12 +22,34 @@
             display: flex;
             align-items: center;
         }
+        .card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .filter-group, .sort-group {
+            display: flex;
+            align-items: center;
+        }
+        .build-stats i {
+            font-style: normal;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
             <a class="navbar-brand" href="{% url 'build-list' %}">Elden Builds</a>
+            
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="{% url 'build-list' %}">Browse Builds</a>
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'build-create' %}">Create Build</a>
+                {% endif %}
+            </div>
+            
             <div>
                 {% if user.is_authenticated %}
                     <span class="navbar-text text-white me-3">

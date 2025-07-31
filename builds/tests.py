@@ -233,3 +233,138 @@ class CommentVoteTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertEqual(data['error'], 'Invalid vote type')
+
+
+class BuildSortingTestCase(TestCase):
+    def setUp(self):
+        # Create test users
+        self.user1 = User.objects.create_user(
+            username='testuser1',
+            email='test1@example.com',
+            password='testpass123'
+        )
+        self.user2 = User.objects.create_user(
+            username='testuser2',
+            email='test2@example.com',
+            password='testpass123'
+        )
+        
+        # Create test builds with different timestamps and likes
+        from django.utils import timezone
+        import datetime
+        
+        self.build1 = Build.objects.create(
+            user=self.user1,
+            title='Alpha Build',
+            description='First build alphabetically',
+            weapons='Sword A',
+            armor='Armor A',
+            talismans='Talisman A',
+            category='PVE'
+        )
+        
+        self.build2 = Build.objects.create(
+            user=self.user2,
+            title='Beta Build',
+            description='Second build alphabetically',
+            weapons='Sword B',
+            armor='Armor B',
+            talismans='Talisman B',
+            category='PVP'
+        )
+        
+        self.build3 = Build.objects.create(
+            user=self.user1,
+            title='Gamma Build',
+            description='Third build alphabetically',
+            weapons='Sword C',
+            armor='Armor C',
+            talismans='Talisman C',
+            category='BOTH'
+        )
+        
+        # Make build2 more popular (more likes)
+        self.build2.liked_by.add(self.user1, self.user2)
+        self.build1.liked_by.add(self.user2)
+        
+        # Add comments to build1 to test comment sorting
+        Comment.objects.create(build=self.build1, user=self.user1, content='Comment 1')
+        Comment.objects.create(build=self.build1, user=self.user2, content='Comment 2')
+        Comment.objects.create(build=self.build2, user=self.user1, content='Comment 3')
+        
+        self.client = Client()
+
+    def test_sort_by_newest(self):
+        """Test sorting builds by newest first (default)"""
+        response = self.client.get(reverse('build-list'))
+        builds = list(response.context['builds'])
+        
+        # Should be in reverse chronological order (newest first)
+        self.assertEqual(builds[0], self.build3)
+        self.assertEqual(builds[1], self.build2)
+        self.assertEqual(builds[2], self.build1)
+
+    def test_sort_by_oldest(self):
+        """Test sorting builds by oldest first"""
+        response = self.client.get(reverse('build-list') + '?sort=oldest')
+        builds = list(response.context['builds'])
+        
+        # Should be in chronological order (oldest first)
+        self.assertEqual(builds[0], self.build1)
+        self.assertEqual(builds[1], self.build2)
+        self.assertEqual(builds[2], self.build3)
+
+    def test_sort_by_popular(self):
+        """Test sorting builds by most liked"""
+        response = self.client.get(reverse('build-list') + '?sort=popular')
+        builds = list(response.context['builds'])
+        
+        # build2 has 2 likes, build1 has 1 like, build3 has 0 likes
+        self.assertEqual(builds[0], self.build2)
+        self.assertEqual(builds[1], self.build1)
+        self.assertEqual(builds[2], self.build3)
+
+    def test_sort_by_most_commented(self):
+        """Test sorting builds by most commented"""
+        response = self.client.get(reverse('build-list') + '?sort=most_commented')
+        builds = list(response.context['builds'])
+        
+        # build1 has 2 comments, build2 has 1 comment, build3 has 0 comments
+        self.assertEqual(builds[0], self.build1)
+        self.assertEqual(builds[1], self.build2)
+        self.assertEqual(builds[2], self.build3)
+
+    def test_sort_alphabetically(self):
+        """Test sorting builds alphabetically by title"""
+        response = self.client.get(reverse('build-list') + '?sort=alphabetical')
+        builds = list(response.context['builds'])
+        
+        # Should be in alphabetical order
+        self.assertEqual(builds[0], self.build1)  # Alpha Build
+        self.assertEqual(builds[1], self.build2)  # Beta Build
+        self.assertEqual(builds[2], self.build3)  # Gamma Build
+
+    def test_filter_by_category(self):
+        """Test filtering builds by category"""
+        response = self.client.get(reverse('build-list') + '?category=PVE')
+        builds = list(response.context['builds'])
+        
+        # Should only contain PVE builds
+        self.assertEqual(len(builds), 1)
+        self.assertEqual(builds[0], self.build1)
+
+    def test_combined_filter_and_sort(self):
+        """Test combining category filter with sorting"""
+        response = self.client.get(reverse('build-list') + '?category=PVP&sort=alphabetical')
+        builds = list(response.context['builds'])
+        
+        # Should only contain PVP builds, sorted alphabetically
+        self.assertEqual(len(builds), 1)
+        self.assertEqual(builds[0], self.build2)
+
+    def test_context_variables(self):
+        """Test that current_sort and current_category are passed to template"""
+        response = self.client.get(reverse('build-list') + '?sort=popular&category=PVE')
+        
+        self.assertEqual(response.context['current_sort'], 'popular')
+        self.assertEqual(response.context['current_category'], 'PVE')

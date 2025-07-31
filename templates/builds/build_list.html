@@ -1,35 +1,129 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>All Builds</h1>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>All Builds</h1>
+    {% if user.is_authenticated %}
+      <a href="{% url 'build-create' %}" class="btn btn-primary">+ Create New Build</a>
+    {% endif %}
+  </div>
 
-<form method="get" class="filter-bar">
-    <select name="category">
-        <option value="">All Types</option>
-        <option value="PVP">PvP</option>
-        <option value="PVE">PvE</option>
-        <option value="BOTH">Both</option>
-    </select>
+  <!-- Filters and Sorting -->
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="d-flex align-items-center gap-3">
+        <!-- Category Filter -->
+        <div class="filter-group">
+          <label for="category-select" class="form-label mb-0 me-2">Category:</label>
+          <select id="category-select" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+            <option value="">All Categories</option>
+            <option value="PVE" {% if current_category == 'PVE' %}selected{% endif %}>PvE</option>
+            <option value="PVP" {% if current_category == 'PVP' %}selected{% endif %}>PvP</option>
+            <option value="BOTH" {% if current_category == 'BOTH' %}selected{% endif %}>Both</option>
+          </select>
+        </div>
 
-    <select name="sort">
-        <option value="new">Newest</option>
-        <option value="popular">Most Liked</option>
-    </select>
+        <!-- Sort Options -->
+        <div class="sort-group">
+          <label for="sort-select" class="form-label mb-0 me-2">Sort by:</label>
+          <select id="sort-select" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
+            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+            <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Most liked</option>
+            <option value="most_commented" {% if current_sort == 'most_commented' %}selected{% endif %}>Most commented</option>
+            <option value="alphabetical" {% if current_sort == 'alphabetical' %}selected{% endif %}>Alphabetical</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <button type="submit">Filter</button>
-</form>
+  <!-- Builds List -->
+  <div class="builds-list">
+    {% if builds %}
+      <div class="row">
+        {% for build in builds %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+              {% if build.image %}
+                <img src="{{ build.image.url }}" class="card-img-top" alt="{{ build.title }}" style="height: 200px; object-fit: cover;">
+              {% endif %}
+              
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">
+                  <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">{{ build.title }}</a>
+                </h5>
+                
+                <p class="card-text text-muted">{{ build.description|truncatewords:20 }}</p>
+                
+                <div class="mt-auto">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted">By {{ build.user.username }}</small>
+                    <span class="badge bg-secondary">{{ build.get_category_display }}</span>
+                  </div>
+                  
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="build-stats">
+                      <small class="text-muted">
+                        <i class="text-danger">❤</i> {{ build.total_likes }}
+                        <span class="ms-2">
+                          <i class="text-primary">💬</i> {{ build.comments.count }}
+                        </span>
+                      </small>
+                    </div>
+                    <small class="text-muted">{{ build.created_at|date:"M d, Y" }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <h3 class="text-muted">No builds found</h3>
+        <p class="text-muted">Be the first to create a build!</p>
+        {% if user.is_authenticated %}
+          <a href="{% url 'build-create' %}" class="btn btn-primary">Create New Build</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
 
+  <!-- JavaScript for filtering and sorting -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const categorySelect = document.getElementById('category-select');
+      const sortSelect = document.getElementById('sort-select');
 
-{% if user.is_authenticated %}
-<a href="{% url 'build-create' %}">+ Create New Build</a>
-{% endif %}
-<ul>
-    {% for build in builds %}
-    <li>
-        <a href="{% url 'build-detail' build.pk %}">{{ build.title }}</a> by {{ build.user.username }}
-        <p><strong>Category:</strong> {{ build.get_category_display }}</p>
-        <p><strong>Likes:</strong> {{ build.total_likes }}</p>
-    </li>
-    {% endfor %}
-</ul>
+      function updateURL() {
+        const currentUrl = new URL(window.location);
+        
+        // Update category parameter
+        if (categorySelect.value) {
+          currentUrl.searchParams.set('category', categorySelect.value);
+        } else {
+          currentUrl.searchParams.delete('category');
+        }
+        
+        // Update sort parameter
+        if (sortSelect.value && sortSelect.value !== 'newest') {
+          currentUrl.searchParams.set('sort', sortSelect.value);
+        } else {
+          currentUrl.searchParams.delete('sort');
+        }
+        
+        window.location.href = currentUrl.toString();
+      }
 
+      if (categorySelect) {
+        categorySelect.addEventListener('change', updateURL);
+      }
+
+      if (sortSelect) {
+        sortSelect.addEventListener('change', updateURL);
+      }
+    });
+  </script>
+</div>
 {% endblock %}
