@@ -1,0 +1,25 @@
+/* Authentication Pages Styles */
+
+/* Card styling for login/register pages */
+.auth-card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.auth-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Form controls for auth pages */
+.auth-form .form-control {
+    margin-bottom: 0.5rem;
+}
+
+/* Logout page specific styles */
+.logout-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

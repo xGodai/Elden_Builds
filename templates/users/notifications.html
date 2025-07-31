@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/notifications.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -90,43 +95,8 @@
     </div>
   {% endif %}
 </div>
+{% endblock %}
 
-<style>
-  .notification-list .card {
-    transition: all 0.2s ease;
-  }
-  
-  .notification-list .card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .notification-list .border-primary {
-    border-left: 4px solid var(--bs-primary) !important;
-  }
-  
-  .notification-actions {
-    flex-shrink: 0;
-  }
-</style>
-
-<script>
-  // Auto-refresh notification count every 30 seconds
-  setInterval(function() {
-    fetch('{% url "unread-notification-count" %}')
-      .then(response => response.json())
-      .then(data => {
-        // Update notification badge in navbar if it exists
-        const badge = document.querySelector('.notification-badge');
-        if (badge) {
-          if (data.count > 0) {
-            badge.textContent = data.count;
-            badge.style.display = 'inline';
-          } else {
-            badge.style.display = 'none';
-          }
-        }
-      })
-      .catch(error => console.error('Error fetching notification count:', error));
-  }, 30000);
-</script>
+{% block extra_js %}
+<script src="{% static 'js/notifications.js' %}"></script>
 {% endblock %}

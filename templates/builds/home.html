@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<div class="hero-section bg-dark text-white py-5 mb-5" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
+<div class="hero-section bg-dark text-white py-5 mb-5">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-6">
@@ -70,7 +75,7 @@
     <div class="col-md-4">
       <div class="feature-card card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-4">
-          <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+          <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
             <i class="bi bi-collection fs-3"></i>
           </div>
           <h4 class="card-title">Comprehensive Builds</h4>
@@ -84,7 +89,7 @@
     <div class="col-md-4">
       <div class="feature-card card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-4">
-          <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+          <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
             <i class="bi bi-people fs-3"></i>
           </div>
           <h4 class="card-title">Active Community</h4>
@@ -98,7 +103,7 @@
     <div class="col-md-4">
       <div class="feature-card card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-4">
-          <div class="feature-icon bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+          <div class="feature-icon bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
             <i class="bi bi-star fs-3"></i>
           </div>
           <h4 class="card-title">Rating System</h4>
@@ -125,11 +130,14 @@
     {% for build in recent_builds %}
     <div class="col-md-4">
       <div class="card h-100 shadow-sm border-0 build-card">
-        {% if build.image %}
-          <img src="{{ build.image.url }}" alt="{{ build.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+        {% if build.has_custom_image %}
+          <img src="{{ build.get_image_url }}" alt="{{ build.title }}" class="card-img-top build-card-img">
         {% else %}
-          <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+          <div class="card-img-top default-build-image">
+            <div class="text-center">
+              <i class="bi bi-shield-check icon"></i>
+              <div class="text">Elden Ring Build</div>
+            </div>
           </div>
         {% endif %}
         
@@ -140,8 +148,7 @@
           <div class="d-flex align-items-center mb-2">
             <img src="{{ build.user.profile.get_profile_picture_url }}" 
                  alt="{{ build.user.username }}" 
-                 class="rounded-circle me-2"
-                 style="width: 24px; height: 24px; object-fit: cover;">
+                 class="rounded-circle me-2 profile-pic-small">
             <small class="text-muted">by {{ build.user.profile.get_display_name }}</small>
           </div>
           
@@ -191,38 +198,8 @@
   </div>
 </div>
 
-<style>
-  .hero-section {
-    margin-top: -1.5rem;
-  }
-  
-  .feature-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-  }
-  
-  .build-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .build-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
-  }
-  
-  .stat-item {
-    padding: 1rem;
-  }
-  
-  .hero-stats {
-    background: rgba(255,255,255,0.1);
-    border-radius: 15px;
-    padding: 2rem;
-    backdrop-filter: blur(10px);
-  }
-</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}"></script>
 {% endblock %}

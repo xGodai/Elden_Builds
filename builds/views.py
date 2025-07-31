@@ -3,8 +3,9 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from .models import Build, Comment, CommentVote
-from .forms import CommentForm
+from django.db import transaction
+from .models import Build, BuildImage, Comment, CommentVote
+from .forms import BuildForm, BuildImageFormSet, CommentForm
 from django.db.models import Count, Q, F
 from django.contrib import messages
 from users.notifications import NotificationService
@@ -82,21 +83,74 @@ class BuildDetailView(DetailView):
 
 class BuildCreateView(LoginRequiredMixin, CreateView):
     model = Build
-    fields = ['title', 'description', 'weapons', 'armor', 'talismans', 'spells', 'image', 'category']
+    form_class = BuildForm
     template_name = 'builds/build_form.html'
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['image_formset'] = BuildImageFormSet(self.request.POST, self.request.FILES)
+        else:
+            data['image_formset'] = BuildImageFormSet()
+        return data
+
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+        context = self.get_context_data()
+        image_formset = context['image_formset']
+        
+        with transaction.atomic():
+            form.instance.user = self.request.user
+            self.object = form.save()
+            
+            if image_formset.is_valid():
+                image_formset.instance = self.object
+                image_formset.save()
+                
+                # If no primary image is set, make the first one primary
+                if self.object.images.exists() and not self.object.images.filter(is_primary=True).exists():
+                    first_image = self.object.images.first()
+                    first_image.is_primary = True
+                    first_image.save()
+                    
+                messages.success(self.request, 'Build created successfully!')
+                return super().form_valid(form)
+            else:
+                return self.form_invalid(form)
 
 class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Build
-    fields = ['title', 'description', 'weapons', 'armor', 'talismans', 'spells', 'image', 'category']
+    form_class = BuildForm
     template_name = 'builds/build_form.html'
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['image_formset'] = BuildImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            data['image_formset'] = BuildImageFormSet(instance=self.object)
+        return data
+
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+        context = self.get_context_data()
+        image_formset = context['image_formset']
+        
+        with transaction.atomic():
+            form.instance.user = self.request.user
+            self.object = form.save()
+            
+            if image_formset.is_valid():
+                image_formset.save()
+                
+                # Ensure at least one primary image if images exist
+                if self.object.images.exists() and not self.object.images.filter(is_primary=True).exists():
+                    first_image = self.object.images.first()
+                    first_image.is_primary = True
+                    first_image.save()
+                    
+                messages.success(self.request, 'Build updated successfully!')
+                return super().form_valid(form)
+            else:
+                return self.form_invalid(form)
 
     def test_func(self):
         build = self.get_object()

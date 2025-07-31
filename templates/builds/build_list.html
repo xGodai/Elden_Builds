@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% load cloudinary_tags %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <div class="d-flex justify-content-between align-items-center mb-4">
@@ -16,7 +22,7 @@
         <!-- Category Filter -->
         <div class="filter-group">
           <label for="category-select" class="form-label mb-0 me-2">Category:</label>
-          <select id="category-select" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+          <select id="category-select" class="form-select form-select-sm inline-select">
             <option value="">All Categories</option>
             <option value="PVE" {% if current_category == 'PVE' %}selected{% endif %}>PvE</option>
             <option value="PVP" {% if current_category == 'PVP' %}selected{% endif %}>PvP</option>
@@ -27,7 +33,7 @@
         <!-- Sort Options -->
         <div class="sort-group">
           <label for="sort-select" class="form-label mb-0 me-2">Sort by:</label>
-          <select id="sort-select" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+          <select id="sort-select" class="form-select form-select-sm inline-select">
             <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
             <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
             <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Most liked</option>
@@ -46,8 +52,15 @@
         {% for build in builds %}
           <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
-              {% if build.image %}
-                {% cloudinary_image build.image 'thumbnail' 'card-img-top' build.title %}
+              {% if build.has_custom_image %}
+                <img src="{{ build.get_image_url }}" alt="{{ build.title }}" class="card-img-top build-card-img">
+              {% else %}
+                <div class="card-img-top default-build-image">
+                  <div class="text-center">
+                    <i class="bi bi-shield-check icon"></i>
+                    <div class="text">Elden Ring Build</div>
+                  </div>
+                </div>
               {% endif %}
               
               <div class="card-body d-flex flex-column">
@@ -62,8 +75,7 @@
                     <div class="d-flex align-items-center">
                       <img src="{{ build.user|profile_picture:'small' }}" 
                            alt="{{ build.user.username }}'s Profile" 
-                           class="rounded-circle me-2"
-                           style="width: 20px; height: 20px; object-fit: cover;">
+                           class="rounded-circle me-2 profile-pic-xs">
                       <small class="text-muted">By 
                         <a href="{% url 'user-profile' build.user.username %}" class="text-decoration-none">
                           {{ build.user.profile.get_display_name }}

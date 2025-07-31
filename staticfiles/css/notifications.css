@@ -1,0 +1,26 @@
+/* Notifications Page Styles */
+
+.notification-list .card {
+    transition: all 0.2s ease;
+}
+
+.notification-list .card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.notification-list .border-primary {
+    border-left: 4px solid var(--bs-primary) !important;
+}
+
+.notification-actions {
+    flex-shrink: 0;
+}
+
+/* Notification status indicators */
+.notification-unread {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.notification-read {
+    opacity: 0.8;
+}

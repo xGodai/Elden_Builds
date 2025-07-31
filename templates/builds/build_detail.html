@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <h2>{{ object.title }}</h2>
@@ -7,14 +13,42 @@
   <p><strong>Armor:</strong> {{ object.armor }}</p>
   <p><strong>Talismans:</strong> {{ object.talismans }}</p>
   <p><strong>Spells:</strong> {{ object.spells }}</p>
-  {% if object.image %}
-    <img src="{{ object.image.url }}" alt="{{ object.title }}" class="img-fluid">
+  
+  <!-- Build Images -->
+  {% if object.images.exists %}
+    <div class="row mb-4">
+      {% for image in object.images.all %}
+        <div class="col-md-4 mb-3">
+          <div class="position-relative">
+            <img src="{{ image.image.url }}" alt="{{ image.caption|default:object.title }}" class="img-fluid rounded">
+            {% if image.is_primary %}
+              <span class="badge bg-primary position-absolute top-0 end-0 m-2">Primary</span>
+            {% endif %}
+            {% if image.caption %}
+              <div class="mt-2">
+                <small class="text-muted">{{ image.caption }}</small>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="mb-4">
+      <div class="default-build-image rounded" style="height: 300px;">
+        <div class="text-center">
+          <i class="bi bi-shield-check icon"></i>
+          <div class="text">{{ object.title }}</div>
+          <small class="mt-2 opacity-75">No images uploaded</small>
+        </div>
+      </div>
+    </div>
   {% endif %}
+  
   <div class="d-flex align-items-center mb-2">
     <img src="{{ object.user.profile.get_profile_picture_url }}" 
          alt="{{ object.user.username }}'s Profile" 
-         class="rounded-circle me-2"
-         style="width: 24px; height: 24px; object-fit: cover;">
+         class="rounded-circle me-2 profile-pic-small">
     <p class="mb-0"><strong>Created by:</strong> 
       <a href="{% url 'user-profile' object.user.username %}" class="text-decoration-none">
         {{ object.user.profile.get_display_name }}
@@ -27,7 +61,7 @@
   <p><strong>Likes:</strong> {{ object.total_likes }}</p>
 
   {% if user.is_authenticated %}
-      <form action="{% url 'build-like' object.pk %}" method="post" style="display: inline;">
+      <form action="{% url 'build-like' object.pk %}" method="post" class="inline-form">
           {% csrf_token %}
           {% if user in object.liked_by.all %}
               <button type="submit" class="btn btn-outline-danger btn-sm">Unlike</button>
@@ -56,7 +90,7 @@
       <!-- Comment Sorting -->
       <div class="comment-sort">
         <label for="comment-sort-select" class="form-label mb-0 me-2">Sort by:</label>
-        <select id="comment-sort-select" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+        <select id="comment-sort-select" class="form-select form-select-sm inline-select">
           <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
           <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
           <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Most popular</option>
@@ -87,8 +121,7 @@
               <div class="d-flex align-items-start">
                 <img src="{{ comment.user.profile.get_profile_picture_url }}" 
                      alt="{{ comment.user.username }}'s Profile" 
-                     class="rounded-circle me-2"
-                     style="width: 32px; height: 32px; object-fit: cover;">
+                     class="rounded-circle me-2 profile-pic-comment">
                 <div>
                   <strong>
                     <a href="{% url 'user-profile' comment.user.username %}" class="text-decoration-none">

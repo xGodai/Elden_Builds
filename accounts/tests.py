@@ -58,7 +58,7 @@ class LoginPageStylingTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         
         # Check for Bootstrap card structure
-        self.assertContains(response, 'class="card"')
+        self.assertContains(response, 'class="auth-card"')
         self.assertContains(response, 'class="card-header"')
         self.assertContains(response, 'class="card-body"')
         
