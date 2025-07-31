@@ -9,7 +9,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Auto-login after registration
-            return redirect('build-list')
+            return redirect('home')
     else:
         form = CustomUserCreationForm()  # For GET requests
 
@@ -20,7 +20,7 @@ def login_view(request):
         form = CustomAuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('build-list')
+            return redirect('home')
     else:
         form = CustomAuthenticationForm()  # For GET requests
 
@@ -32,4 +32,4 @@ def logout_view(request):
         return redirect('login')
     else:
         # For GET requests, redirect to home page
-        return redirect('build-list')
+        return redirect('home')

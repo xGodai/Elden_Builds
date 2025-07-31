@@ -150,7 +150,7 @@ class UserProfileTestCase(TestCase):
     def test_profile_picture_in_navbar(self):
         """Test that profile pictures appear in navbar"""
         self.client.login(username='testuser', password='testpass123')
-        response = self.client.get(reverse('build-list'))
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
         # Check that profile picture URL is in the response (accounting for HTML escaping)
         expected_url = self.user.profile.get_profile_picture_url().replace('&', '&amp;')

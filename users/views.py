@@ -20,7 +20,7 @@ def register(request):
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! You can now log in.')
             login(request, user)  # Automatically log in the user
-            return redirect('build-list')
+            return redirect('home')
     else:
         form = UserRegistrationForm()
     return render(request, 'users/register.html', {'form': form})

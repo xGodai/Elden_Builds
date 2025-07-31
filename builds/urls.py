@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .home_views import home
 from .views import (
     BuildListView,
     BuildDetailView,
@@ -14,7 +15,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path('', BuildListView.as_view(), name='build-list'),
+    path('', home, name='home'),
+    path('builds/', BuildListView.as_view(), name='build-list'),
     path('build/<int:pk>/', BuildDetailView.as_view(), name='build-detail'),
     path('build/new/', BuildCreateView.as_view(), name='build-create'),
     path('build/<int:pk>/edit/', BuildUpdateView.as_view(), name='build-update'),
