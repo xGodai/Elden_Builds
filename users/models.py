@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-from PIL import Image
+from cloudinary.models import CloudinaryField
+import hashlib
 
 # Create your models here.
 
@@ -9,10 +10,11 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     display_name = models.CharField(max_length=50, blank=True, help_text="Display name (optional, defaults to username)")
     bio = models.TextField(max_length=500, blank=True, help_text="Tell us about yourself")
-    profile_picture = models.ImageField(
-        upload_to='profile_pics/', 
+    profile_picture = CloudinaryField(
+        'image', 
         blank=True,
         null=True,
+        folder='profile_pics/',
         help_text="Profile picture"
     )
     location = models.CharField(max_length=100, blank=True, help_text="Your location")
@@ -47,28 +49,22 @@ class UserProfile(models.Model):
             email_hash = hashlib.md5(self.user.email.lower().encode('utf-8')).hexdigest()
             return f"https://www.gravatar.com/avatar/{email_hash}?s=150&d=identicon"
 
-    def get_profile_picture_url(self):
-        """Return profile picture URL or a default placeholder"""
-        if self.profile_picture and hasattr(self.profile_picture, 'url'):
-            return self.profile_picture.url
+    def get_profile_picture_url(self, size='medium'):
+        """Return optimized profile picture URL or a default placeholder"""
+        if self.profile_picture:
+            from utils.cloudinary_utils import get_profile_picture_url, PROFILE_SIZES
+            size_config = PROFILE_SIZES.get(size, PROFILE_SIZES['medium'])
+            return get_profile_picture_url(self.profile_picture, size_config['width'])
         else:
-            # Return a placeholder image URL
-            return f"https://ui-avatars.com/api/?name={self.get_display_name()}&background=6c757d&color=ffffff&size=300"
+            # Return a placeholder image URL  
+            from utils.cloudinary_utils import PROFILE_SIZES
+            size_px = PROFILE_SIZES.get(size, PROFILE_SIZES['medium'])['width']
+            return f"https://ui-avatars.com/api/?name={self.get_display_name()}&background=6c757d&color=ffffff&size={size_px}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        
-        # Resize image if it exists and is too large
-        if self.profile_picture and hasattr(self.profile_picture, 'path'):
-            try:
-                img = Image.open(self.profile_picture.path)
-                if img.height > 300 or img.width > 300:
-                    output_size = (300, 300)
-                    img.thumbnail(output_size)
-                    img.save(self.profile_picture.path)
-            except Exception:
-                # If PIL fails or file doesn't exist, continue silently
-                pass
+        # Cloudinary handles image optimization automatically
+        # No need for manual image processing
 
     def total_builds(self):
         return self.user.build_set.count()

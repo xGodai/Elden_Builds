@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -19,13 +20,24 @@ class Build(models.Model):
     armor = models.CharField(max_length=100)
     talismans = models.CharField(max_length=100)
     spells = models.CharField(max_length=100, blank=True, null=True)
-    image = models.ImageField(upload_to='build_images/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True, folder='build_images/')
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='PVE')
     liked_by = models.ManyToManyField(User, related_name='liked_builds', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def total_likes(self):
         return self.liked_by.count()
+    
+    def get_image_url(self, size='medium'):
+        """Return optimized build image URL"""
+        if self.image:
+            from utils.cloudinary_utils import get_build_image_url, get_thumbnail_url, BUILD_SIZES
+            if size == 'thumbnail':
+                return get_thumbnail_url(self.image)
+            else:
+                size_config = BUILD_SIZES.get(size, BUILD_SIZES['medium'])
+                return get_build_image_url(self.image, size_config['width'], size_config['height'])
+        return None
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.pk})
