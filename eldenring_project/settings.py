@@ -168,5 +168,5 @@ cloudinary.config(
 # Use Cloudinary for media files
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Note: MEDIA_URL and MEDIA_ROOT not needed with Cloudinary
+# All media files are served directly from Cloudinary CDN

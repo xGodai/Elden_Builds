@@ -2,151 +2,334 @@
 {% load cloudinary_tags %}
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock %}
-
 {% block content %}
-<div class="container">
+<div class="container py-4">
+  <!-- Header Section -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>All Builds</h1>
+    <div>
+      <h1 class="er-heading-primary mb-2">
+        <i class="fas fa-scroll me-2 text-warning"></i>
+        Legendary Builds
+      </h1>
+      <p class="er-text-muted">Discover and share powerful character builds for your journey</p>
+    </div>
     {% if user.is_authenticated %}
-      <a href="{% url 'build-create' %}" class="btn btn-primary">+ Create New Build</a>
+      <a href="{% url 'build-create' %}" class="btn er-btn-primary btn-lg">
+        <i class="fas fa-plus me-2"></i>
+        Forge New Build
+      </a>
     {% endif %}
   </div>
 
-  <!-- Filters and Sorting -->
-  <div class="row mb-4">
-    <div class="col-md-8">
-      <div class="d-flex align-items-center gap-3">
+  <!-- Search and Filters -->
+  <div class="er-card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Search Bar -->
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text er-bg-charcoal border-0">
+              <i class="fas fa-search text-warning"></i>
+            </span>
+            <input type="text" class="form-control search-input" 
+                   placeholder="Search builds..." 
+                   aria-label="Search builds">
+          </div>
+        </div>
+        
         <!-- Category Filter -->
-        <div class="filter-group">
-          <label for="category-select" class="form-label mb-0 me-2">Category:</label>
-          <select id="category-select" class="form-select form-select-sm inline-select">
+        <div class="col-md-3">
+          <select id="category-select" class="form-select">
             <option value="">All Categories</option>
             <option value="PVE" {% if current_category == 'PVE' %}selected{% endif %}>PvE</option>
             <option value="PVP" {% if current_category == 'PVP' %}selected{% endif %}>PvP</option>
             <option value="BOTH" {% if current_category == 'BOTH' %}selected{% endif %}>Both</option>
           </select>
         </div>
-
+        
         <!-- Sort Options -->
-        <div class="sort-group">
-          <label for="sort-select" class="form-label mb-0 me-2">Sort by:</label>
-          <select id="sort-select" class="form-select form-select-sm inline-select">
-            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
-            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
-            <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Most liked</option>
-            <option value="most_commented" {% if current_sort == 'most_commented' %}selected{% endif %}>Most commented</option>
-            <option value="alphabetical" {% if current_sort == 'alphabetical' %}selected{% endif %}>Alphabetical</option>
+        <div class="col-md-3">
+          <select id="sort-select" class="form-select">
+            <option value="created_at">Newest First</option>
+            <option value="likes">Most Liked</option>
+            <option value="title">Alphabetical</option>
+            <option value="updated_at">Recently Updated</option>
           </select>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Builds List -->
-  <div class="builds-list">
+  <!-- Builds Grid -->
+  <div class="builds-grid">
     {% if builds %}
-      <div class="row">
+      <div class="row g-4">
         {% for build in builds %}
-          <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100">
-              {% if build.has_custom_image %}
-                <img src="{{ build.get_image_url }}" alt="{{ build.title }}" class="card-img-top build-card-img">
-              {% else %}
-                <div class="card-img-top default-build-image">
-                  <div class="text-center">
-                    <i class="bi bi-shield-check icon"></i>
-                    <div class="text">Elden Ring Build</div>
+          <div class="col-lg-4 col-md-6">
+            <div class="build-card h-100" data-build-index="{{ forloop.counter0 }}">
+              <!-- Build Image -->
+              <div class="build-image-container">
+                {% if build.has_custom_image %}
+                  <img src="{{ build.get_image_url }}" 
+                       alt="{{ build.title }}" 
+                       class="build-image"
+                       loading="lazy">
+                {% else %}
+                  <div class="build-image-placeholder">
+                    <div class="placeholder-content">
+                      <i class="fas fa-shield-alt"></i>
+                      <span>Elden Ring Build</span>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                <!-- Category Badge -->
+                <div class="build-category-badge">
+                  <span class="badge er-badge-{{ build.category|lower }}">
+                    {% if build.category == 'PVE' %}
+                      <i class="fas fa-sword me-1"></i>PvE
+                    {% elif build.category == 'PVP' %}
+                      <i class="fas fa-crossed-swords me-1"></i>PvP
+                    {% else %}
+                      <i class="fas fa-balance-scale me-1"></i>Both
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Build Content -->
+              <div class="build-content">
+                <div class="build-header">
+                  <h3 class="build-title">
+                    <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">
+                      {{ build.title }}
+                    </a>
+                  </h3>
+                  <p class="build-description">{{ build.description|truncatewords:15 }}</p>
+                </div>
+                
+                <!-- Build Stats -->
+                <div class="build-stats">
+                  <div class="stat-item">
+                    <i class="fas fa-heart"></i>
+                    <span>{{ build.likes.count }}</span>
+                  </div>
+                  <div class="stat-item">
+                    <i class="fas fa-comments"></i>
+                    <span>{{ build.comments.count }}</span>
+                  </div>
+                  <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span>{{ build.views|default:0 }}</span>
                   </div>
                 </div>
-              {% endif %}
-              
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title">
-                  <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">{{ build.title }}</a>
-                </h5>
                 
-                <p class="card-text text-muted">{{ build.description|truncatewords:20 }}</p>
-                
-                <div class="mt-auto">
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center">
-                      <img src="{{ build.user|profile_picture:'small' }}" 
-                           alt="{{ build.user.username }}'s Profile" 
-                           class="rounded-circle me-2 profile-pic-xs">
-                      <small class="text-muted">By 
+                <!-- Build Author -->
+                <div class="build-author">
+                  <div class="author-info">
+                    <img src="{{ build.user|profile_picture:'small' }}" 
+                         alt="{{ build.user.username }}'s Profile" 
+                         class="author-avatar">
+                    <div class="author-details">
+                      <span class="author-name">
                         <a href="{% url 'user-profile' build.user.username %}" class="text-decoration-none">
                           {{ build.user.profile.get_display_name }}
                         </a>
-                      </small>
+                      </span>
+                      <span class="build-date">{{ build.created_at|timesince }} ago</span>
                     </div>
-                    <span class="badge bg-secondary">{{ build.get_category_display }}</span>
                   </div>
                   
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="build-stats">
-                      <small class="text-muted">
-                        <i class="text-danger">❤</i> {{ build.total_likes }}
-                        <span class="ms-2">
-                          <i class="text-primary">💬</i> {{ build.comments.count }}
-                        </span>
-                      </small>
+                  {% if user.is_authenticated %}
+                    <div class="build-actions">
+                      <button class="btn btn-sm er-btn-ghost like-btn" 
+                              data-build-id="{{ build.id }}"
+                              title="Like this build">
+                        <i class="fas fa-heart"></i>
+                      </button>
                     </div>
-                    <small class="text-muted">{{ build.created_at|date:"M d, Y" }}</small>
-                  </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
           </div>
         {% endfor %}
       </div>
+      
+      <!-- Pagination -->
+      {% if is_paginated %}
+        <div class="d-flex justify-content-center mt-5">
+          <nav aria-label="Builds pagination">
+            <ul class="pagination er-pagination">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page=1{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    <i class="fas fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    <i class="fas fa-angle-left"></i>
+                  </a>
+                </li>
+              {% endif %}
+              
+              <li class="page-item active">
+                <span class="page-link">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+              </li>
+              
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    <i class="fas fa-angle-right"></i>
+                  </a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
+                    <i class="fas fa-angle-double-right"></i>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      {% endif %}
     {% else %}
-      <div class="text-center py-5">
-        <h3 class="text-muted">No builds found</h3>
-        <p class="text-muted">Be the first to create a build!</p>
+      <!-- Empty State -->
+      <div class="empty-state text-center py-5">
+        <div class="empty-state-icon mb-4">
+          <i class="fas fa-scroll" style="font-size: 4rem; color: var(--er-gold-dim);"></i>
+        </div>
+        <h3 class="er-heading-secondary mb-3">No Builds Found</h3>
+        <p class="er-text-muted mb-4">
+          The Lands Between await your legendary builds. Be the first to forge a path!
+        </p>
         {% if user.is_authenticated %}
-          <a href="{% url 'build-create' %}" class="btn btn-primary">Create New Build</a>
+          <a href="{% url 'build-create' %}" class="btn er-btn-primary btn-lg">
+            <i class="fas fa-hammer me-2"></i>
+            Create Your First Build
+          </a>
+        {% else %}
+          <div>
+            <a href="{% url 'login' %}" class="btn er-btn-primary me-3">
+              <i class="fas fa-sign-in-alt me-2"></i>
+              Login
+            </a>
+            <a href="{% url 'register' %}" class="btn er-btn-secondary">
+              <i class="fas fa-user-plus me-2"></i>
+              Join the Community
+            </a>
+          </div>
         {% endif %}
       </div>
     {% endif %}
   </div>
+</div>
 
-  <!-- JavaScript for filtering and sorting -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const categorySelect = document.getElementById('category-select');
-      const sortSelect = document.getElementById('sort-select');
-
-      function updateURL() {
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter and Sort functionality
+    const categorySelect = document.getElementById('category-select');
+    const sortSelect = document.getElementById('sort-select');
+    const searchInput = document.querySelector('.search-input');
+    
+    function updateBuilds() {
         const currentUrl = new URL(window.location);
         
         // Update category parameter
         if (categorySelect.value) {
-          currentUrl.searchParams.set('category', categorySelect.value);
+            currentUrl.searchParams.set('category', categorySelect.value);
         } else {
-          currentUrl.searchParams.delete('category');
+            currentUrl.searchParams.delete('category');
         }
         
         // Update sort parameter
-        if (sortSelect.value && sortSelect.value !== 'newest') {
-          currentUrl.searchParams.set('sort', sortSelect.value);
+        if (sortSelect.value) {
+            currentUrl.searchParams.set('sort', sortSelect.value);
         } else {
-          currentUrl.searchParams.delete('sort');
+            currentUrl.searchParams.delete('sort');
         }
         
+        // Update search parameter
+        if (searchInput.value.trim()) {
+            currentUrl.searchParams.set('search', searchInput.value.trim());
+        } else {
+            currentUrl.searchParams.delete('search');
+        }
+        
+        // Remove page parameter when filtering
+        currentUrl.searchParams.delete('page');
+        
         window.location.href = currentUrl.toString();
-      }
-
-      if (categorySelect) {
-        categorySelect.addEventListener('change', updateURL);
-      }
-
-      if (sortSelect) {
-        sortSelect.addEventListener('change', updateURL);
-      }
+    }
+    
+    // Add event listeners
+    if (categorySelect) {
+        categorySelect.addEventListener('change', updateBuilds);
+    }
+    
+    if (sortSelect) {
+        sortSelect.addEventListener('change', updateBuilds);
+    }
+    
+    // Search with debouncing
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(updateBuilds, 500);
+        });
+        
+        // Set initial search value if present in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+            searchInput.value = searchParam;
+        }
+    }
+    
+    // Like button functionality
+    const likeButtons = document.querySelectorAll('.like-btn');
+    
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const buildId = this.dataset.buildId;
+            
+            // Add loading state
+            const originalHtml = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            this.disabled = true;
+            
+            // Here you would make an AJAX call to like/unlike the build
+            // For now, just toggle the visual state
+            setTimeout(() => {
+                this.classList.toggle('liked');
+                this.innerHTML = originalHtml;
+                this.disabled = false;
+            }, 500);
+        });
     });
-  </script>
-</div>
+    
+    // Smooth scroll for pagination
+    const paginationLinks = document.querySelectorAll('.pagination .page-link');
+    
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            // Scroll to top of builds grid
+            const buildsGrid = document.querySelector('.builds-grid');
+            if (buildsGrid) {
+                buildsGrid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
 {% endblock %}
