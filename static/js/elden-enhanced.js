@@ -91,14 +91,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('form');
     
     forms.forEach(form => {
-        // Skip authentication forms - let them submit normally
+        console.log(`Checking form: ${form.id}, action: ${form.action}, classes: ${form.className}`);
+        
+        // Skip authentication forms and build forms - let them submit normally
         if (form.classList.contains('er-form') || 
             form.action.includes('/login/') || 
             form.action.includes('/logout/') || 
-            form.action.includes('/register/')) {
+            form.action.includes('/register/') ||
+            form.id === 'build-form') {
+            console.log(`Skipping form validation for: ${form.id}`);
             return;
         }
         
+        console.log(`Adding validation to form: ${form.id}`);
         form.addEventListener('submit', function(e) {
             const invalidFields = form.querySelectorAll(':invalid');
             

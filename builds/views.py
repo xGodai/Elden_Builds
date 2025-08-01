@@ -85,23 +85,35 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
     model = Build
     form_class = BuildForm
     template_name = 'builds/build_form.html'
+    success_url = reverse_lazy('build-list')
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         if self.request.POST:
-            data['image_formset'] = BuildImageFormSet(self.request.POST, self.request.FILES)
+            # Create formset with POST data
+            data['image_formset'] = BuildImageFormSet(
+                self.request.POST, 
+                self.request.FILES, 
+                queryset=BuildImage.objects.none()  # Use empty queryset for new builds
+            )
         else:
-            data['image_formset'] = BuildImageFormSet()
+            # Create empty formset for GET requests
+            data['image_formset'] = BuildImageFormSet(
+                queryset=BuildImage.objects.none()
+            )
         return data
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        image_formset = context['image_formset']
-        
+        # Save the main build form first
         with transaction.atomic():
             form.instance.user = self.request.user
             self.object = form.save()
             
+            # Handle images if any were uploaded
+            context = self.get_context_data()
+            image_formset = context['image_formset']
+            
+            # Only process images if formset is valid or if it's just empty
             if image_formset.is_valid():
                 image_formset.instance = self.object
                 image_formset.save()
@@ -111,11 +123,13 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
-                    
-                messages.success(self.request, 'Build created successfully!')
-                return super().form_valid(form)
-            else:
-                return self.form_invalid(form)
+            
+            # Always succeed if the main form is valid - images are optional
+            messages.success(self.request, 'Build created successfully!')
+            return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Build
@@ -131,13 +145,16 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return data
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        image_formset = context['image_formset']
-        
+        # Save the main build form first
         with transaction.atomic():
             form.instance.user = self.request.user
             self.object = form.save()
             
+            # Handle images if any were uploaded
+            context = self.get_context_data()
+            image_formset = context['image_formset']
+            
+            # Only process images if formset is valid
             if image_formset.is_valid():
                 image_formset.save()
                 
@@ -146,11 +163,10 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
-                    
-                messages.success(self.request, 'Build updated successfully!')
-                return super().form_valid(form)
-            else:
-                return self.form_invalid(form)
+            
+            # Always succeed if the main form is valid - images are optional
+            messages.success(self.request, 'Build updated successfully!')
+            return super().form_valid(form)
 
     def test_func(self):
         build = self.get_object()

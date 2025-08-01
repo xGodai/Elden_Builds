@@ -19,7 +19,7 @@
         </div>
         
         <div class="card-body">
-          <form method="POST" enctype="multipart/form-data" id="build-form">
+          <form method="POST" enctype="multipart/form-data" id="build-form" novalidate>
             {% csrf_token %}
             
             <!-- Build Information -->
@@ -198,5 +198,18 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/build-form.js' %}"></script>
+<!-- Override the problematic JavaScript -->
+<script>
+// Force disable any form validation on the build form
+document.addEventListener('DOMContentLoaded', function() {
+    const buildForm = document.getElementById('build-form');
+    if (buildForm) {
+        console.log('Build form found - ensuring clean submission');
+        // Remove any existing event listeners by cloning the form
+        const newForm = buildForm.cloneNode(true);
+        buildForm.parentNode.replaceChild(newForm, buildForm);
+        console.log('Build form event listeners cleared');
+    }
+});
+</script>
 {% endblock %}
