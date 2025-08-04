@@ -21,11 +21,26 @@ class BuildListView(ListView):
     def get_queryset(self):
         queryset = Build.objects.all()
         category = self.request.GET.get('category')
+        search = self.request.GET.get('search')
         sort = self.request.GET.get('sort', 'newest')
 
+        # Apply search filter
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search) |
+                Q(weapons__icontains=search) |
+                Q(armor__icontains=search) |
+                Q(talismans__icontains=search) |
+                Q(spells__icontains=search) |
+                Q(user__username__icontains=search)
+            )
+
+        # Apply category filter
         if category:
             queryset = queryset.filter(category=category)
             
+        # Apply sorting
         if sort == 'popular':
             queryset = queryset.annotate(like_count=Count('liked_by')).order_by('-like_count', '-created_at')
         elif sort == 'oldest':
@@ -43,6 +58,7 @@ class BuildListView(ListView):
         context = super().get_context_data(**kwargs)
         context['current_sort'] = self.request.GET.get('sort', 'newest')
         context['current_category'] = self.request.GET.get('category', '')
+        context['current_search'] = self.request.GET.get('search', '')
         
         # Add user_has_liked information for authenticated users
         if self.request.user.is_authenticated:
