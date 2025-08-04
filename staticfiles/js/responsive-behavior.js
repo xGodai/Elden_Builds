@@ -13,14 +13,30 @@
   
   // Prevent layout shifts by setting body to loaded state
   function setLoaded() {
+    document.body.classList.remove('loading');
     document.body.classList.add('loaded');
+    // Force opacity to 1 for browser compatibility
+    document.body.style.opacity = '1';
   }
   
-  // Set loaded state as soon as possible
+  // Set initial loading state
+  document.body.classList.add('loading');
+  
+  // Set loaded state as soon as possible with multiple fallbacks
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setLoaded);
+    // Fallback timer in case DOMContentLoaded doesn't fire
+    setTimeout(setLoaded, 2000);
   } else {
+    // Document already loaded
     setLoaded();
+  }
+  
+  // Additional browser-specific fallbacks
+  if (window.addEventListener) {
+    window.addEventListener('load', setLoaded, false);
+  } else if (window.attachEvent) {
+    window.attachEvent('onload', setLoaded);
   }
 })();
 
@@ -124,13 +140,17 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Ensure body is visible after all setup
+  document.body.classList.remove('loading');
   document.body.classList.add('loaded');
+  document.body.style.opacity = '1';
 });
 
 // Handle page navigation (for SPAs or AJAX navigation)
 window.addEventListener('popstate', function() {
   setTimeout(() => {
+    document.body.classList.remove('loading');
     document.body.classList.add('loaded');
+    document.body.style.opacity = '1';
     // Force responsive recalculation on navigation
     window.dispatchEvent(new Event('resize'));
   }, 50);
@@ -143,7 +163,9 @@ window.ResponsiveBehavior = {
   },
   
   setLoaded: function() {
+    document.body.classList.remove('loading');
     document.body.classList.add('loaded');
+    document.body.style.opacity = '1';
   },
   
   checkMobile: function() {

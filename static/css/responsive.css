@@ -11,13 +11,19 @@ html {
   box-sizing: inherit;
 }
 
-/* Prevent flash of unstyled content (FOUC) */
+/* Prevent flash of unstyled content (FOUC) - Browser compatible version */
 body {
   opacity: 0;
-  transition: opacity 0.1s ease-in;
+  transition: opacity 0.2s ease-in;
+  background-color: #ffffff; /* Explicit white background for consistency */
 }
 
 body.loaded {
+  opacity: 1 !important;
+}
+
+/* Fallback for browsers that don't support the loaded class properly */
+body:not(.loading) {
   opacity: 1;
 }
 
@@ -31,6 +37,13 @@ img {
 body {
   overflow-x: hidden;
   min-height: 100vh;
+  background-color: #ffffff !important; /* Force white background */
+  color: #212529; /* Ensure text is visible */
+}
+
+/* Ensure navbar has proper dark theme */
+.navbar-dark {
+  background-color: #343a40 !important;
 }
 
 /* Ensure containers are responsive and maintain their size */
@@ -39,6 +52,7 @@ body {
   max-width: 100%;
   padding-left: 15px;
   padding-right: 15px;
+  background-color: transparent;
 }
 
 /* Force immediate responsive behavior */
