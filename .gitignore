@@ -5,6 +5,7 @@ __pycache__/
 
 # Virtual env
 venv/
+.venv/
 ENV/
 env/
 
@@ -15,9 +16,21 @@ env/
 *.pyo
 *.db
 db.sqlite3
+media/
+
+# Environment variables
+.env
+env.py
 
 # VSCode
 .vscode/
+
+# Collected static files
+/staticfiles/
+
+# OS
+.DS_Store
+Thumbs.db
 
 # macOS/Linux/Windows
 .DS_Store
