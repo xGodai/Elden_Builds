@@ -444,3 +444,189 @@ textarea:focus,
 .shadow-lg {
     box-shadow: 0 1rem 3rem var(--shadow-dark) !important;
 }
+
+/* Responsive Button Sizing */
+@media (min-width: 768px) {
+    .btn-md-normal {
+        padding: 0.75rem 1.5rem !important;
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+        border-radius: 0.5rem !important;
+        width: auto !important;
+        max-width: fit-content !important;
+    }
+}
+
+/* Build Form Enhancements */
+#build-form {
+    font-size: 1rem;
+}
+
+#build-form .form-label {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600 !important;
+}
+
+#build-form .form-control,
+#build-form .form-select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#build-form textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Equipment Section Styling */
+.equipment-section {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.equipment-section .section-title {
+    color: var(--accent-primary);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.equipment-section .row .col-12 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.equipment-section .mb-3 {
+    flex: 1;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Form Section Spacing */
+#build-form .row {
+    margin-bottom: 1.5rem;
+}
+
+#build-form .mb-3 {
+    margin-bottom: 2rem !important;
+}
+
+#build-form .mb-4 {
+    margin-bottom: 2.5rem !important;
+}
+
+/* Image Upload Section */
+.image-formset {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.image-upload-item {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.image-upload-item:last-of-type {
+    margin-bottom: 1rem;
+}
+
+.file-upload-info {
+    background-color: rgba(77, 171, 247, 0.1);
+    border: 1px solid var(--accent-primary);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+.file-upload-info ul {
+    padding-left: 1.25rem;
+    margin-top: 0.5rem;
+}
+
+.file-upload-info li {
+    margin-bottom: 0.25rem;
+}
+
+/* Form Actions */
+#build-form .d-flex.gap-2 {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-secondary);
+}
+
+#build-form .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+}
+
+/* Small Text Improvements */
+#build-form .text-muted {
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+#build-form small.text-muted {
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+/* Form Check Improvements */
+#build-form .form-check {
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+#build-form .form-check-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+/* Card Header Enhancement */
+#build-form .card-header {
+    padding: 1.25rem 1.5rem;
+}
+
+#build-form .card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Responsive Form Adjustments */
+@media (max-width: 767.98px) {
+    #build-form .card-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    #build-form .image-formset {
+        padding: 1rem;
+    }
+    
+    #build-form .image-upload-item {
+        padding: 1rem;
+    }
+    
+    #build-form .form-label {
+        font-size: 1rem;
+    }
+    
+    #build-form .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
