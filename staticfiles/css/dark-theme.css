@@ -9,30 +9,30 @@
     --bg-hover: #333333;          /* Hover states */
     
     /* Text Colors - High Contrast */
-    --text-primary: #f5f5dc;      /* Warm white - Elden Ring text color - 19.8:1 contrast */
-    --text-secondary: #d4af37;    /* Golden yellow - Grace guidance - 8.2:1 contrast */
-    --text-muted: #b8860b;        /* Darker gold - 6.1:1 contrast */
+    --text-primary: #e8dcc6;      /* Warm parchment - Elden Ring text color */
+    --text-secondary: #c9b037;    /* Muted golden - Grace guidance */
+    --text-muted: #9a7b0a;        /* Dark bronze - 6.1:1 contrast */
     --text-disabled: #808080;     /* Disabled text - 5.31:1 contrast */
     
-    /* Elden Ring Accent Colors - WCAG AA Compliant */
-    --accent-primary: #ffd700;    /* Grace golden - 9.6:1 contrast */
-    --accent-secondary: #98fb98;  /* Erdtree green - 13.2:1 contrast */
-    --accent-warning: #ff8c00;    /* Flame orange - 6.8:1 contrast */
-    --accent-danger: #dc143c;     /* Crimson red - 5.9:1 contrast */
-    --accent-info: #87ceeb;       /* Sky blue - 8.1:1 contrast */
-    --accent-rune: #daa520;       /* Rune amber - 7.4:1 contrast */
+    /* Elden Ring Accent Colors - Gothic & Muted */
+    --accent-primary: #b8860b;    /* Dark goldenrod - Gothic gold */
+    --accent-secondary: #7ba05b;  /* Muted erdtree green */
+    --accent-warning: #cd853f;    /* Peru bronze - Flame orange */
+    --accent-danger: #a0522d;     /* Sienna red - Crimson */
+    --accent-info: #5f8a8b;       /* Dark cyan - Sky blue */
+    --accent-rune: #8b7355;       /* Dark khaki - Rune amber */
     
     /* Border Colors */
     --border-primary: #4a4a4a;    /* Lighter borders for better definition */
     --border-secondary: #333333;  /* Secondary borders */
-    --border-focus: #ffd700;      /* Golden focus indicator */
-    --border-grace: #daa520;      /* Grace-touched borders */
+    --border-focus: #b8860b;      /* Dark golden focus indicator */
+    --border-grace: #8b7355;      /* Muted Grace-touched borders */
     
     /* Shadow Colors */
-    --shadow-light: rgba(255, 215, 0, 0.1);   /* Golden glow */
-    --shadow-medium: rgba(255, 215, 0, 0.15); /* Medium golden glow */
-    --shadow-dark: rgba(0, 0, 0, 0.7);        /* Deep shadow */
-    --shadow-grace: rgba(218, 165, 32, 0.3);  /* Grace shadow */
+    --shadow-light: rgba(184, 134, 11, 0.08);   /* Muted golden glow */
+    --shadow-medium: rgba(184, 134, 11, 0.12);  /* Medium muted glow */
+    --shadow-dark: rgba(0, 0, 0, 0.7);          /* Deep shadow */
+    --shadow-grace: rgba(139, 115, 85, 0.2);    /* Subtle Grace shadow */
 }
 
 /* Global Dark Theme Application */
@@ -640,16 +640,17 @@ textarea:focus,
 .btn-primary {
     background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-rune) 100%) !important;
     border: 1px solid var(--accent-primary) !important;
-    color: #000000 !important;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.2) !important;
     transition: all 0.3s ease !important;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background: linear-gradient(135deg, #ffed4e 0%, #f4d03f 100%) !important;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5) !important;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%) !important;
+    box-shadow: 0 0 12px rgba(184, 134, 11, 0.3) !important;
     transform: translateY(-1px) !important;
+    color: #ffffff !important;
 }
 
 /* Grace-touched Cards */
@@ -669,13 +670,13 @@ textarea:focus,
 .navbar {
     background: linear-gradient(90deg, var(--bg-secondary) 0%, #1e1e1e 50%, var(--bg-secondary) 100%) !important;
     border-bottom: 2px solid var(--border-grace) !important;
-    box-shadow: 0 2px 10px var(--shadow-grace) !important;
+    box-shadow: 0 2px 8px var(--shadow-grace) !important;
 }
 
 .navbar-brand {
     color: var(--accent-primary) !important;
     font-weight: 700 !important;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5) !important;
+    text-shadow: 0 0 6px rgba(184, 134, 11, 0.3) !important;
 }
 
 /* Elegant Typography */
@@ -686,7 +687,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
     color: var(--accent-primary) !important;
-    text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4) !important;
+    text-shadow: 0 2px 6px rgba(184, 134, 11, 0.25) !important;
 }
 
 /* Hero Section Enhancement */
@@ -699,23 +700,23 @@ h1, h2, h3, h4, h5, h6 {
 /* Badge Enhancements */
 .badge {
     background: linear-gradient(45deg, var(--accent-primary) 0%, var(--accent-rune) 100%) !important;
-    color: #000000 !important;
+    color: #ffffff !important;
     border: 1px solid var(--accent-rune) !important;
-    box-shadow: 0 0 8px rgba(218, 165, 32, 0.4) !important;
+    box-shadow: 0 0 6px rgba(139, 115, 85, 0.3) !important;
 }
 
 /* Default Emblem Enhancement */
 .default-emblem {
     background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-rune) 100%) !important;
     border: 2px solid var(--border-grace) !important;
-    box-shadow: 0 0 15px var(--shadow-grace) !important;
+    box-shadow: 0 0 10px var(--shadow-grace) !important;
 }
 
 /* Form Enhancements */
 .form-control:focus,
 .form-select:focus {
     border-color: var(--border-grace) !important;
-    box-shadow: 0 0 0 0.25rem rgba(218, 165, 32, 0.25) !important;
+    box-shadow: 0 0 0 0.25rem rgba(139, 115, 85, 0.2) !important;
 }
 
 /* Links with Grace */
@@ -727,18 +728,18 @@ a {
 a:hover,
 a:focus {
     color: var(--accent-primary) !important;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
+    text-shadow: 0 0 6px rgba(184, 134, 11, 0.4) !important;
 }
 
 /* Stats Numbers Enhancement */
 .text-primary {
     color: var(--accent-primary) !important;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5) !important;
+    text-shadow: 0 0 8px rgba(184, 134, 11, 0.3) !important;
 }
 
 .text-success {
     color: var(--accent-secondary) !important;
-    text-shadow: 0 0 10px rgba(152, 251, 152, 0.4) !important;
+    text-shadow: 0 0 6px rgba(123, 160, 91, 0.3) !important;
 }
 
 /* Stats Container Fix */
@@ -763,7 +764,7 @@ a:focus {
 .card-body .bg-primary,
 .card-body .bg-success,
 .card-body .bg-warning {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 0 12px rgba(184, 134, 11, 0.2) !important;
     border: 2px solid var(--accent-rune) !important;
 }
 
@@ -772,15 +773,15 @@ a:focus {
     content: "⚡";
     color: var(--accent-primary);
     margin-left: 0.5rem;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    text-shadow: 0 0 6px rgba(184, 134, 11, 0.4);
 }
 
 /* Pagination Grace */
 .pagination .page-item.active .page-link {
     background: linear-gradient(45deg, var(--accent-primary) 0%, var(--accent-rune) 100%) !important;
     border-color: var(--accent-primary) !important;
-    color: #000000 !important;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.3) !important;
 }
 
 /* Clickable Card Enhancement */
