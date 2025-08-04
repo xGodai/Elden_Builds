@@ -218,6 +218,10 @@ class BuildLikeView(LoginRequiredMixin, View):
             })
         
         # Redirect for non-AJAX requests
+        # Try to redirect back to the referring page, otherwise go to build detail
+        next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
+        if next_url:
+            return redirect(next_url)
         return redirect('build-detail', pk=pk)
 
 

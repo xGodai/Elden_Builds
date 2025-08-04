@@ -60,6 +60,7 @@
   {% if user.is_authenticated %}
       <form action="{% url 'build-like' object.pk %}" method="post" class="inline-form">
           {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
           {% if user in object.liked_by.all %}
               <button type="submit" class="btn btn-outline-danger btn-sm">Unlike</button>
           {% else %}

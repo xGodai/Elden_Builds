@@ -123,11 +123,14 @@
                   </div>
                   
                   {% if user.is_authenticated %}
-                    <button class="btn btn-outline-danger btn-sm like-btn {% if build.user_has_liked %}bg-danger text-white{% endif %}" 
-                            data-build-id="{{ build.id }}"
-                            title="{% if build.user_has_liked %}Unlike this build{% else %}Like this build{% endif %}">
-                      ❤️
-                    </button>
+                    <form action="{% url 'build-like' build.pk %}" method="post" style="display: inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                      <button type="submit" class="btn btn-outline-danger btn-sm {% if build.user_has_liked %}bg-danger text-white{% endif %}" 
+                              title="{% if build.user_has_liked %}Unlike this build{% else %}Like this build{% endif %}">
+                        ❤️
+                      </button>
+                    </form>
                   {% endif %}
                 </div>
               </div>
@@ -201,8 +204,8 @@
     {% endif %}
   </div>
 </div>
+{% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/build-list.js' %}"></script>
-{% endblock %}
 {% endblock %}

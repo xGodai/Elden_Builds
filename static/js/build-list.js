@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎮 Build list JavaScript loaded!');
+    
     // Filter and Sort functionality
     const categorySelect = document.getElementById('category-select');
     const sortSelect = document.getElementById('sort-select');
@@ -59,74 +61,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Like button functionality
-    const likeButtons = document.querySelectorAll('.like-btn');
-    
-    likeButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const buildId = this.dataset.buildId;
-            const originalText = this.innerHTML;
-            
-            // Add loading state
-            this.innerHTML = '⏳';
-            this.disabled = true;
-            
-            // Get CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]');
-            if (!csrfToken) {
-                alert('Error: Please refresh the page.');
-                this.innerHTML = originalText;
-                this.disabled = false;
-                return;
-            }
-            
-            // Create form data
-            const formData = new FormData();
-            formData.append('csrfmiddlewaretoken', csrfToken.getAttribute('content'));
-            
-            // Make AJAX request
-            fetch(`/build/${buildId}/like/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Toggle the visual state
-                    if (data.is_liked) {
-                        this.classList.remove('btn-outline-danger');
-                        this.classList.add('btn-danger');
-                        this.title = 'Unlike this build';
-                    } else {
-                        this.classList.remove('btn-danger');
-                        this.classList.add('btn-outline-danger');
-                        this.title = 'Like this build';
-                    }
-                    
-                    // Update like count in the stats
-                    const statsContainer = this.closest('.card').querySelector('.d-flex.justify-content-between.text-muted');
-                    if (statsContainer) {
-                        const likeSpan = statsContainer.children[0];
-                        likeSpan.textContent = `❤️ ${data.total_likes}`;
-                    }
-                } else {
-                    alert('Failed to like/unlike build. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            })
-            .finally(() => {
-                // Restore button state
-                this.innerHTML = originalText;
-                this.disabled = false;
-            });
-        });
-    });
+    console.log('🎮 Build list JavaScript setup complete!');
 });
