@@ -59,6 +59,7 @@
                 <div class="mb-3">
                   <label for="{{ form.weapons.id_for_label }}" class="form-label fw-bold">
                     ⚔️ Weapons
+                    <small class="text-muted fw-normal">(separate multiple items with commas)</small>
                   </label>
                   {{ form.weapons }}
                   {% if form.weapons.errors %}
@@ -69,6 +70,7 @@
                 <div class="mb-3">
                   <label for="{{ form.armor.id_for_label }}" class="form-label fw-bold">
                     🛡️ Armor
+                    <small class="text-muted fw-normal">(separate multiple items with commas)</small>
                   </label>
                   {{ form.armor }}
                   {% if form.armor.errors %}
@@ -81,6 +83,7 @@
                 <div class="mb-3">
                   <label for="{{ form.talismans.id_for_label }}" class="form-label fw-bold">
                     💎 Talismans
+                    <small class="text-muted fw-normal">(separate multiple items with commas)</small>
                   </label>
                   {{ form.talismans }}
                   {% if form.talismans.errors %}
@@ -90,7 +93,8 @@
                 
                 <div class="mb-3">
                   <label for="{{ form.spells.id_for_label }}" class="form-label fw-bold">
-                    ⚡ Spells <small class="text-muted">(Optional)</small>
+                    ⚡ Spells 
+                    <small class="text-muted fw-normal">(Optional - separate multiple items with commas)</small>
                   </label>
                   {{ form.spells }}
                   {% if form.spells.errors %}
@@ -187,4 +191,8 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/elden-ring-api.js' %}"></script>
 {% endblock %}
