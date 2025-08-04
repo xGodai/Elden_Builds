@@ -7,10 +7,10 @@
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-7 col-xl-6 mb-4 mb-lg-0">
-        <h1 class="display-5 display-md-4 fw-bold mb-3 mb-md-4">Elden Ring Builds Community</h1>
+        <h1 class="display-5 display-md-4 fw-bold mb-3 mb-md-4 section-title">Elden Ring Builds Community</h1>
         <p class="lead mb-3 mb-md-4">
-          Discover, share, and perfect your Elden Ring character builds. Join other Tarnished warriors 
-          sharing their strategies, gear combinations, and battle-tested builds.
+          Discover, share, and perfect your Elden Ring character builds. Join fellow Tarnished warriors 
+          in sharing their strategies, gear combinations, and Grace-blessed builds for the journey ahead.
         </p>
         <div class="d-flex flex-column flex-sm-row gap-2 gap-sm-3">
           {% if user.is_authenticated %}
@@ -31,17 +31,17 @@
         </div>
       </div>
       <div class="col-lg-5 col-xl-6">
-        <div class="row text-center">
+        <div class="row text-center stats-container">
           <div class="col-6 col-sm-4 offset-sm-2 col-lg-6 offset-lg-0">
             <div class="p-3 p-md-4">
-              <h3 class="display-6 display-md-5 fw-bold text-primary">{{ total_builds }}</h3>
-              <p class="mb-0 text-muted">Builds</p>
+              <div class="display-6 display-md-5 fw-bold text-primary">{{ total_builds }}</div>
+              <div class="mb-0 text-muted stats-label">Builds</div>
             </div>
           </div>
           <div class="col-6 col-sm-4 col-lg-6">
             <div class="p-3 p-md-4">
-              <h3 class="display-6 display-md-5 fw-bold text-success">{{ total_comments }}</h3>
-              <p class="mb-0 text-muted">Comments</p>
+              <div class="display-6 display-md-5 fw-bold text-success">{{ total_comments }}</div>
+              <div class="mb-0 text-muted stats-label">Comments</div>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
 <div class="container mb-4 mb-md-5">
   <div class="row text-center mb-4 mb-md-5">
     <div class="col-12">
-      <h2 class="display-6 display-md-5 fw-bold mb-2 mb-md-3">Why Choose Our Platform?</h2>
+      <h2 class="display-6 display-md-5 fw-bold mb-2 mb-md-3 section-title">Why Choose Our Platform?</h2>
       <p class="lead text-muted">Everything you need to master the Lands Between</p>
     </div>
   </div>
@@ -64,11 +64,11 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-3 p-md-4">
           <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
-            📚
+            ⚔️
           </div>
-          <h4 class="card-title h5 h-md-4">Comprehensive Builds</h4>
+          <h4 class="card-title h5 h-md-4">Masterful Builds</h4>
           <p class="card-text text-muted small">
-            Detailed build guides including weapons, armor, talismans, spells, and strategies for every playstyle.
+            Detailed build guides including weapons, armor, talismans, incantations, and Grace-blessed strategies for every path.
           </p>
         </div>
       </div>
@@ -78,11 +78,11 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-3 p-md-4">
           <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
-            👥
+            �️
           </div>
-          <h4 class="card-title h5 h-md-4">Active Community</h4>
+          <h4 class="card-title h5 h-md-4">Tarnished Brotherhood</h4>
           <p class="card-text text-muted small">
-            Connect with fellow Tarnished, share experiences, and get feedback on your builds from experienced players.
+            Connect with fellow warriors, share your journey, and gain wisdom from veterans of the Lands Between.
           </p>
         </div>
       </div>
@@ -92,11 +92,11 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-3 p-md-4">
           <div class="bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
-            ⭐
+            🌟
           </div>
-          <h4 class="card-title h5 h-md-4">Rating System</h4>
+          <h4 class="card-title h5 h-md-4">Grace System</h4>
           <p class="card-text text-muted small">
-            Like and comment on builds to help others discover the most effective strategies and hidden gems.
+            Rate and discuss builds to help other Tarnished discover the most powerful strategies and hidden treasures.
           </p>
         </div>
       </div>
@@ -108,7 +108,7 @@
 {% if recent_builds %}
 <div class="container mb-4 mb-md-5">
   <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 mb-md-4">
-    <h2 class="fw-bold mb-2 mb-sm-0">Latest Builds</h2>
+    <h2 class="fw-bold mb-2 mb-sm-0 section-title">Latest Grace-touched Builds</h2>
     <a href="{% url 'build-list' %}" class="btn btn-outline-primary btn-sm">
       View All →
     </a>
@@ -137,8 +137,8 @@
           
           <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
             <small class="text-muted mb-2 mb-sm-0">
-              ❤️ {{ build.total_likes }}
-              💬 {{ build.comments.count }}
+              ⚡ {{ build.total_likes }} Grace
+              � {{ build.comments.count }} Words
             </small>
             <span class="badge bg-primary">{{ build.get_category_display }}</span>
           </div>
