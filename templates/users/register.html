@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/elden-theme.css' %}">
-{% endblock %}
-
 {% block content %}
 <div class="container py-5">
   <div class="row justify-content-center">
@@ -13,33 +9,31 @@
         <div class="card-body p-4">
           <!-- Header -->
           <div class="text-center mb-4">
-            <div class="er-emblem mb-3">
-              <i class="fas fa-crown" style="font-size: 3rem; color: var(--er-gold);"></i>
-            </div>
-            <h2 class="er-heading-primary mb-2">Join the Fellowship</h2>
-            <p class="er-text-muted">Create your account to begin your journey in the Lands Between</p>
+            <div class="mb-3" style="font-size: 3rem;">👑</div>
+            <h2 class="mb-2">Join the Fellowship</h2>
+            <p class="text-muted">Create your account to begin your journey in the Lands Between</p>
           </div>
 
           <!-- Registration Form -->
-          <form method="post" action="{% url 'user-register' %}" class="er-form" novalidate>
+          <form method="post" action="{% url 'user-register' %}" novalidate>
             {% csrf_token %}
             
             <!-- Username Field -->
             <div class="form-group mb-3">
               <label for="{{ form.username.id_for_label }}" class="form-label">
-                <i class="fas fa-user me-2"></i>Username
+                👤 Username
               </label>
               {{ form.username }}
               {% if form.username.errors %}
-                <div class="er-form-error mt-2">
+                <div class="text-danger mt-2">
                   {% for error in form.username.errors %}
-                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                    ⚠️ {{ error }}
                   {% endfor %}
                 </div>
               {% endif %}
               {% if form.username.help_text %}
-                <div class="form-text er-text-muted mt-1">
-                  <i class="fas fa-info-circle me-1"></i>{{ form.username.help_text }}
+                <div class="form-text text-muted mt-1">
+                  ℹ️ {{ form.username.help_text }}
                 </div>
               {% endif %}
             </div>
@@ -47,19 +41,19 @@
             <!-- Email Field -->
             <div class="form-group mb-3">
               <label for="{{ form.email.id_for_label }}" class="form-label">
-                <i class="fas fa-envelope me-2"></i>Email Address
+                📧 Email Address
               </label>
               {{ form.email }}
               {% if form.email.errors %}
-                <div class="er-form-error mt-2">
+                <div class="text-danger mt-2">
                   {% for error in form.email.errors %}
-                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                    ⚠️ {{ error }}
                   {% endfor %}
                 </div>
               {% endif %}
               {% if form.email.help_text %}
-                <div class="form-text er-text-muted mt-1">
-                  <i class="fas fa-info-circle me-1"></i>{{ form.email.help_text }}
+                <div class="form-text text-muted mt-1">
+                  ℹ️ {{ form.email.help_text }}
                 </div>
               {% endif %}
             </div>
@@ -67,19 +61,19 @@
             <!-- Password Field -->
             <div class="form-group mb-3">
               <label for="{{ form.password1.id_for_label }}" class="form-label">
-                <i class="fas fa-lock me-2"></i>Password
+                🔒 Password
               </label>
               {{ form.password1 }}
               {% if form.password1.errors %}
-                <div class="er-form-error mt-2">
+                <div class="text-danger mt-2">
                   {% for error in form.password1.errors %}
-                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                    ⚠️ {{ error }}
                   {% endfor %}
                 </div>
               {% endif %}
               {% if form.password1.help_text %}
-                <div class="form-text er-text-muted mt-1">
-                  <i class="fas fa-info-circle me-1"></i>{{ form.password1.help_text }}
+                <div class="form-text text-muted mt-1">
+                  ℹ️ {{ form.password1.help_text }}
                 </div>
               {% endif %}
             </div>
@@ -87,28 +81,27 @@
             <!-- Confirm Password Field -->
             <div class="form-group mb-4">
               <label for="{{ form.password2.id_for_label }}" class="form-label">
-                <i class="fas fa-shield-alt me-2"></i>Confirm Password
+                🛡️ Confirm Password
               </label>
               {{ form.password2 }}
               {% if form.password2.errors %}
-                <div class="er-form-error mt-2">
+                <div class="text-danger mt-2">
                   {% for error in form.password2.errors %}
-                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                    ⚠️ {{ error }}
                   {% endfor %}
                 </div>
               {% endif %}
               {% if form.password2.help_text %}
-                <div class="form-text er-text-muted mt-1">
-                  <i class="fas fa-info-circle me-1"></i>{{ form.password2.help_text }}
+                <div class="form-text text-muted mt-1">
+                  ℹ️ {{ form.password2.help_text }}
                 </div>
               {% endif %}
             </div>
 
             <!-- Non-field errors -->
             {% if form.non_field_errors %}
-              <div class="er-alert er-alert-danger mb-4" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                {% for error in form.non_field_errors %}
+              <div class="alert alert-danger mb-4" role="alert">
+                ⚠️ {% for error in form.non_field_errors %}
                   {{ error }}
                 {% endfor %}
               </div>
@@ -117,18 +110,17 @@
             <!-- Submit Button -->
             <div class="d-grid mb-4">
               <button type="submit" class="btn btn-primary btn-lg" id="registerBtn">
-                <i class="fas fa-user-plus me-2"></i>
-                Embark on Your Journey
+                ➕ Embark on Your Journey
               </button>
             </div>
           </form>
           
           <!-- Login Link -->
           <div class="text-center">
-            <p class="er-text-muted mb-0">
+            <p class="text-muted mb-0">
               Already have an account? 
-              <a href="{% url 'login' %}" class="er-link">
-                <i class="fas fa-sign-in-alt me-1"></i>Sign In
+              <a href="{% url 'login' %}" class="text-decoration-none">
+                🔓 Sign In
               </a>
             </p>
           </div>
@@ -137,17 +129,4 @@
     </div>
   </div>
 </div>
-
-{% block extra_js %}
-<!-- Simplified - no JavaScript interference -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-focus username field
-    const usernameField = document.querySelector('input[name="username"]');
-    if (usernameField) {
-        usernameField.focus();
-    }
-});
-</script>
-{% endblock %}
 {% endblock %}

@@ -1,20 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-<link rel="stylesheet" href="{% static 'css/forms.css' %}">
-{% endblock %}
-
 {% block content %}
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <div class="card shadow-sm">
+      <div class="card">
         <div class="card-header bg-primary text-white">
           <h2 class="mb-0">
-            <i class="bi bi-plus-circle me-2"></i>
-            {% if form.instance.pk %}Edit{% else %}Create{% endif %} Build
+            ➕ {% if form.instance.pk %}Edit{% else %}Create{% endif %} Build
           </h2>
         </div>
         
@@ -27,7 +21,7 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
-                    <i class="bi bi-card-heading me-1"></i>Build Title
+                    📝 Build Title
                   </label>
                   {{ form.title }}
                   {% if form.title.errors %}
@@ -39,7 +33,7 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
-                    <i class="bi bi-tags me-1"></i>Category
+                    🏷️ Category
                   </label>
                   {{ form.category }}
                   {% if form.category.errors %}
@@ -51,7 +45,7 @@
             
             <div class="mb-3">
               <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
-                <i class="bi bi-file-text me-1"></i>Description
+                📄 Description
               </label>
               {{ form.description }}
               {% if form.description.errors %}
@@ -64,7 +58,7 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.weapons.id_for_label }}" class="form-label fw-bold">
-                    <i class="bi bi-sword me-1"></i>Weapons
+                    ⚔️ Weapons
                   </label>
                   {{ form.weapons }}
                   {% if form.weapons.errors %}
@@ -74,7 +68,7 @@
                 
                 <div class="mb-3">
                   <label for="{{ form.armor.id_for_label }}" class="form-label fw-bold">
-                    <i class="bi bi-shield me-1"></i>Armor
+                    🛡️ Armor
                   </label>
                   {{ form.armor }}
                   {% if form.armor.errors %}
@@ -86,7 +80,7 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.talismans.id_for_label }}" class="form-label fw-bold">
-                    <i class="bi bi-gem me-1"></i>Talismans
+                    💎 Talismans
                   </label>
                   {{ form.talismans }}
                   {% if form.talismans.errors %}
@@ -96,7 +90,7 @@
                 
                 <div class="mb-3">
                   <label for="{{ form.spells.id_for_label }}" class="form-label fw-bold">
-                    <i class="bi bi-lightning me-1"></i>Spells <small class="text-muted">(Optional)</small>
+                    ⚡ Spells <small class="text-muted">(Optional)</small>
                   </label>
                   {{ form.spells }}
                   {% if form.spells.errors %}
@@ -109,7 +103,7 @@
             <!-- Image Upload Section -->
             <div class="mb-4">
               <h5 class="fw-bold mb-3">
-                <i class="bi bi-images me-2"></i>Build Images 
+                🖼️ Build Images 
                 <small class="text-muted">(Max 3 images, 10MB each)</small>
               </h5>
               
@@ -122,7 +116,7 @@
                       <div class="row align-items-center">
                         <div class="col-md-6">
                           <label class="form-label">
-                            <i class="bi bi-upload me-1"></i>Image File
+                            📁 Image File
                           </label>
                           {{ form.image }}
                           {% if form.image.errors %}
@@ -165,8 +159,7 @@
                 </div>
                 
                 <div class="file-upload-info">
-                  <i class="bi bi-info-circle me-1"></i>
-                  <strong>Upload Guidelines:</strong>
+                  ℹ️ <strong>Upload Guidelines:</strong>
                   <ul class="mb-0 mt-1">
                     <li>Maximum 3 images per build</li>
                     <li>Each image must be under 10MB</li>
@@ -178,14 +171,13 @@
             </div>
             
             <!-- Form Actions -->
-            <div class="d-flex btn-gap">
+            <div class="d-flex gap-2">
               <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-lg me-1"></i>
-                {% if form.instance.pk %}Update{% else %}Create{% endif %} Build
+                ✅ {% if form.instance.pk %}Update{% else %}Create{% endif %} Build
               </button>
               
               <a href="{% url 'build-list' %}" class="btn btn-secondary">
-                <i class="bi bi-x-lg me-1"></i>Cancel
+                ❌ Cancel
               </a>
             </div>
           </form>
@@ -195,21 +187,4 @@
   </div>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<!-- Override the problematic JavaScript -->
-<script>
-// Force disable any form validation on the build form
-document.addEventListener('DOMContentLoaded', function() {
-    const buildForm = document.getElementById('build-form');
-    if (buildForm) {
-        console.log('Build form found - ensuring clean submission');
-        // Remove any existing event listeners by cloning the form
-        const newForm = buildForm.cloneNode(true);
-        buildForm.parentNode.replaceChild(newForm, buildForm);
-        console.log('Build form event listeners cleared');
-    }
-});
-</script>
 {% endblock %}

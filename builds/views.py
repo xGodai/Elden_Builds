@@ -43,6 +43,16 @@ class BuildListView(ListView):
         context = super().get_context_data(**kwargs)
         context['current_sort'] = self.request.GET.get('sort', 'newest')
         context['current_category'] = self.request.GET.get('category', '')
+        
+        # Add user_has_liked information for authenticated users
+        if self.request.user.is_authenticated:
+            builds = context['builds']
+            user_liked_builds = set(
+                self.request.user.liked_builds.values_list('id', flat=True)
+            )
+            for build in builds:
+                build.user_has_liked = build.id in user_liked_builds
+        
         return context
 
 class BuildDetailView(DetailView):
@@ -186,13 +196,28 @@ class BuildLikeView(LoginRequiredMixin, View):
     def post(self, request, pk):
         build = get_object_or_404(Build, pk=pk)
         
-        if request.user in build.liked_by.all():
+        # Check if user is already liked the build
+        is_liked = request.user in build.liked_by.all()
+        
+        if is_liked:
             build.liked_by.remove(request.user)
+            action = 'unliked'
         else:
             build.liked_by.add(request.user)
+            action = 'liked'
             # Create notification for build like
             NotificationService.create_build_like_notification(build, request.user)
         
+        # Return JSON response for AJAX requests
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'action': action,
+                'total_likes': build.total_likes(),
+                'is_liked': not is_liked
+            })
+        
+        # Redirect for non-AJAX requests
         return redirect('build-detail', pk=pk)
 
 

@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock %}
-
 {% block content %}
 <div class="container">
   <h2>{{ object.title }}</h2>
@@ -35,11 +31,11 @@
     </div>
   {% else %}
     <div class="mb-4">
-      <div class="default-build-image rounded" style="height: 300px;">
-        <div class="text-center">
-          <i class="bi bi-shield-check icon"></i>
-          <div class="text">{{ object.title }}</div>
-          <small class="mt-2 opacity-75">No images uploaded</small>
+      <div class="bg-light rounded d-flex align-items-center justify-content-center text-center" style="height: 300px;">
+        <div>
+          <div style="font-size: 3rem;">🛡️</div>
+          <div class="fw-bold">{{ object.title }}</div>
+          <small class="text-muted">No images uploaded</small>
         </div>
       </div>
     </div>
@@ -48,7 +44,8 @@
   <div class="d-flex align-items-center mb-2">
     <img src="{{ object.user.profile.get_profile_picture_url }}" 
          alt="{{ object.user.username }}'s Profile" 
-         class="rounded-circle me-2 profile-pic-small">
+         class="rounded-circle me-2"
+         style="width: 24px; height: 24px; object-fit: cover;">
     <p class="mb-0"><strong>Created by:</strong> 
       <a href="{% url 'user-profile' object.user.username %}" class="text-decoration-none">
         {{ object.user.profile.get_display_name }}
@@ -121,7 +118,8 @@
               <div class="d-flex align-items-start">
                 <img src="{{ comment.user.profile.get_profile_picture_url }}" 
                      alt="{{ comment.user.username }}'s Profile" 
-                     class="rounded-circle me-2 profile-pic-comment">
+                     class="rounded-circle me-2"
+                     style="width: 32px; height: 32px; object-fit: cover;">
                 <div>
                   <strong>
                     <a href="{% url 'user-profile' comment.user.username %}" class="text-decoration-none">

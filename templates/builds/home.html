@@ -1,13 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock %}
-
 {% block content %}
 <!-- Hero Section -->
-<div class="hero-section bg-dark text-white py-5 mb-5">
+<div class="bg-light py-5 mb-5">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-6">
@@ -19,41 +15,33 @@
         <div class="d-flex gap-3">
           {% if user.is_authenticated %}
             <a href="{% url 'build-create' %}" class="btn btn-primary btn-lg">
-              <i class="bi bi-plus-circle me-2"></i>Create Build
+              Create Build
             </a>
-            <a href="{% url 'build-list' %}" class="btn btn-outline-light btn-lg">
-              <i class="bi bi-search me-2"></i>Browse Builds
+            <a href="{% url 'build-list' %}" class="btn btn-outline-primary btn-lg">
+              Browse Builds
             </a>
           {% else %}
             <a href="{% url 'user-register' %}" class="btn btn-primary btn-lg">
-              <i class="bi bi-person-plus me-2"></i>Join Community
+              Join Community
             </a>
-            <a href="{% url 'build-list' %}" class="btn btn-outline-light btn-lg">
-              <i class="bi bi-search me-2"></i>Browse Builds
+            <a href="{% url 'build-list' %}" class="btn btn-outline-primary btn-lg">
+              Browse Builds
             </a>
           {% endif %}
         </div>
       </div>
       <div class="col-lg-6 text-center">
-        <div class="hero-stats">
-          <div class="row">
-            <div class="col-4">
-              <div class="stat-item">
-                <h3 class="display-6 fw-bold text-warning">{{ total_builds }}</h3>
-                <p class="mb-0">Builds</p>
-              </div>
+        <div class="row">
+          <div class="col-4">
+            <div class="text-center">
+              <h3 class="display-6 fw-bold">{{ total_builds }}</h3>
+              <p class="mb-0">Builds</p>
             </div>
-            <div class="col-4">
-              <div class="stat-item">
-                <h3 class="display-6 fw-bold text-info">{{ total_users }}</h3>
-                <p class="mb-0">Warriors</p>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="stat-item">
-                <h3 class="display-6 fw-bold text-success">{{ total_comments }}</h3>
-                <p class="mb-0">Comments</p>
-              </div>
+          </div>
+          <div class="col-4">
+            <div class="text-center">
+              <h3 class="display-6 fw-bold">{{ total_comments }}</h3>
+              <p class="mb-0">Comments</p>
             </div>
           </div>
         </div>
@@ -73,10 +61,10 @@
   
   <div class="row g-4">
     <div class="col-md-4">
-      <div class="feature-card card h-100 border-0 shadow-sm">
+      <div class="card h-100">
         <div class="card-body text-center p-4">
-          <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-            <i class="bi bi-collection fs-3"></i>
+          <div class="bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            📚
           </div>
           <h4 class="card-title">Comprehensive Builds</h4>
           <p class="card-text text-muted">
@@ -87,10 +75,10 @@
     </div>
     
     <div class="col-md-4">
-      <div class="feature-card card h-100 border-0 shadow-sm">
+      <div class="card h-100">
         <div class="card-body text-center p-4">
-          <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-            <i class="bi bi-people fs-3"></i>
+          <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            👥
           </div>
           <h4 class="card-title">Active Community</h4>
           <p class="card-text text-muted">
@@ -101,10 +89,10 @@
     </div>
     
     <div class="col-md-4">
-      <div class="feature-card card h-100 border-0 shadow-sm">
+      <div class="card h-100">
         <div class="card-body text-center p-4">
-          <div class="feature-icon bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-            <i class="bi bi-star fs-3"></i>
+          <div class="bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            ⭐
           </div>
           <h4 class="card-title">Rating System</h4>
           <p class="card-text text-muted">
@@ -122,22 +110,19 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold">Latest Builds</h2>
     <a href="{% url 'build-list' %}" class="btn btn-outline-primary">
-      View All <i class="bi bi-arrow-right ms-1"></i>
+      View All →
     </a>
   </div>
   
   <div class="row g-4">
     {% for build in recent_builds %}
     <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0 build-card">
+      <div class="card h-100">
         {% if build.has_custom_image %}
-          <img src="{{ build.get_image_url }}" alt="{{ build.title }}" class="card-img-top build-card-img">
+          <img src="{{ build.get_image_url }}" alt="{{ build.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
         {% else %}
-          <div class="card-img-top default-build-image">
-            <div class="text-center">
-              <i class="bi bi-shield-check icon"></i>
-              <div class="text">Elden Ring Build</div>
-            </div>
+          <div class="card-img-top" style="height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+            <span class="text-muted">No Image</span>
           </div>
         {% endif %}
         
@@ -148,14 +133,15 @@
           <div class="d-flex align-items-center mb-2">
             <img src="{{ build.user.profile.get_profile_picture_url }}" 
                  alt="{{ build.user.username }}" 
-                 class="rounded-circle me-2 profile-pic-small">
+                 class="rounded-circle me-2"
+                 style="width: 24px; height: 24px; object-fit: cover;">
             <small class="text-muted">by {{ build.user.profile.get_display_name }}</small>
           </div>
           
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">
-              <i class="bi bi-heart me-1"></i>{{ build.total_likes }}
-              <i class="bi bi-chat ms-2 me-1"></i>{{ build.comments.count }}
+              ❤️ {{ build.total_likes }}
+              💬 {{ build.comments.count }}
             </small>
             <span class="badge bg-primary">{{ build.get_category_display }}</span>
           </div>
@@ -163,7 +149,7 @@
         
         <div class="card-footer bg-transparent border-0">
           <a href="{% url 'build-detail' build.pk %}" class="btn btn-outline-primary btn-sm w-100">
-            View Build <i class="bi bi-arrow-right ms-1"></i>
+            View Build →
           </a>
         </div>
       </div>
@@ -183,23 +169,19 @@
     
     {% if user.is_authenticated %}
       <a href="{% url 'build-create' %}" class="btn btn-primary btn-lg">
-        <i class="bi bi-plus-circle me-2"></i>Create Your First Build
+        Create Your First Build
       </a>
     {% else %}
       <div class="d-flex gap-3 justify-content-center">
         <a href="{% url 'user-register' %}" class="btn btn-primary btn-lg">
-          <i class="bi bi-person-plus me-2"></i>Sign Up Free
+          Sign Up Free
         </a>
         <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
-          <i class="bi bi-box-arrow-in-right me-2"></i>Login
+          Login
         </a>
       </div>
     {% endif %}
   </div>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/home.js' %}"></script>
 {% endblock %}
