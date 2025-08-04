@@ -3,7 +3,18 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="bg-light py-4 py-md-5 mb-4 mb-md-5">
+<div class="bg-light py-4 py-md-5           <di          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+            <small class="text-muted mb-2 mb-sm-0">
+              ⚡ {{ build.total_likes }} Grace
+              💭 {{ build.comments.count }} Words
+            </small>
+            <span class="badge bg-primary">{{ build.get_category_display }}</span>
+          </div>
+        </div>
+        </div>
+      </a>
+    </div> p-3">
+            <h3 class="card-title h6 mb-2 text-body">{{ build.title }}</h3>-4 mb-md-5">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-7 col-xl-6 mb-4 mb-lg-0">
@@ -78,7 +89,7 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body text-center p-3 p-md-4">
           <div class="bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
-            🛡️
+            �️
           </div>
           <h4 class="card-title h5 h-md-4">Tarnished Brotherhood</h4>
           <p class="card-text text-muted small">
@@ -119,33 +130,40 @@
     <div class="col-12 col-sm-6 col-lg-4">
       <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">
         <div class="card h-100 border-0 shadow-sm card-hover-effect">
-          <img src="{{ build.get_image_url }}" 
-               alt="{{ build.title }}" 
-               class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}"
-               style="height: 180px;">
+        <img src="{{ build.get_image_url }}" 
+             alt="{{ build.title }}" 
+             class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}"
+             style="height: 180px;">
+        
+        <div class="card-body p-3">
+          <h5 class="card-title h6 mb-2">{{ build.title }}</h5>
+          <p class="card-text text-muted small mb-3">{{ build.description|truncatewords:10 }}</p>
           
-          <div class="card-body p-3">
-            <h3 class="card-title h6 mb-2 text-body">{{ build.title }}</h3>
-            <p class="card-text text-muted small mb-3">{{ build.description|truncatewords:10 }}</p>
-            
-            <div class="d-flex align-items-center mb-2">
-              <img src="{{ build.user.profile.get_profile_picture_url }}" 
-                   alt="{{ build.user.username }}" 
-                   class="rounded-circle me-2"
-                   style="width: 20px; height: 20px; object-fit: cover;">
-              <small class="text-muted">by {{ build.user.profile.get_display_name }}</small>
-            </div>
-            
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
-              <small class="text-muted mb-2 mb-sm-0">
-                ⚡ {{ build.total_likes }} Grace
-                💭 {{ build.comments.count }} Words
-              </small>
-              <span class="badge bg-primary">{{ build.get_category_display }}</span>
-            </div>
+          <div class="d-flex align-items-center mb-2">
+            <img src="{{ build.user.profile.get_profile_picture_url }}" 
+                 alt="{{ build.user.username }}" 
+                 class="rounded-circle me-2"
+                 style="width: 20px; height: 20px; object-fit: cover;">
+            <small class="text-muted">by {{ build.user.profile.get_display_name }}</small>
+          </div>
+          
+          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+            <small class="text-muted mb-2 mb-sm-0">
+              ⚡ {{ build.total_likes }} Grace
+              � {{ build.comments.count }} Words
+            </small>
+            <span class="badge bg-primary">{{ build.get_category_display }}</span>
           </div>
         </div>
-      </a>
+        
+        <div class="card-footer bg-transparent border-0 p-3 pt-2 mt-2">
+          <div class="d-grid">
+            <a href="{% url 'build-detail' build.pk %}" class="btn btn-outline-primary btn-sm">
+              View Build →
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
     {% endfor %}
   </div>

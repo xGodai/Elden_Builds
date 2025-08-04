@@ -782,3 +782,24 @@ a:focus {
     color: #000000 !important;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.4) !important;
 }
+
+/* Clickable Card Enhancement */
+.card-hover-effect {
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.card-hover-effect:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 30px var(--shadow-grace) !important;
+    border-color: var(--border-grace) !important;
+}
+
+.card-hover-effect .text-body {
+    color: var(--text-primary) !important;
+    transition: color 0.3s ease !important;
+}
+
+.card-hover-effect:hover .text-body {
+    color: var(--accent-primary) !important;
+}
