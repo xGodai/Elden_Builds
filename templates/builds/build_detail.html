@@ -82,6 +82,22 @@
             </div>
           </div>
         </div>
+      {% else %}
+        <!-- Default emblem when no custom images -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="mb-0">🖼️ Build Visual</h4>
+          </div>
+          <div class="card-body text-center">
+            <img src="{{ object.get_image_url }}" 
+                 alt="{{ object.title }}" 
+                 class="img-fluid rounded default-emblem" 
+                 style="max-width: 300px; height: 200px;">
+            <p class="text-muted mt-3 mb-0">
+              <small>Category emblem for {{ object.get_category_display }}</small>
+            </p>
+          </div>
+        </div>
       {% endif %}
     </div>
     

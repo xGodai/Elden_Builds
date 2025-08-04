@@ -54,7 +54,31 @@ class Build(models.Model):
             else:
                 size_config = BUILD_SIZES.get(size, BUILD_SIZES['medium'])
                 return get_build_image_url(primary_image.image, size_config['width'], size_config['height'])
-        return None  # Will use CSS default image
+        
+        # Return default emblem image based on build category
+        return self.get_default_image_url()
+    
+    def get_default_image_url(self):
+        """Return a default emblem image based on build category"""
+        from django.templatetags.static import static
+        import random
+        
+        # Map categories to specific emblems
+        category_emblems = {
+            'PVE': ['s60110_a.png', 's60120_a.png', 's60140_a.png', 's60160_a.png'],  # Adventure/PvE themed
+            'PVP': ['s60200_a.png', 's60210_a.png', 's60230_a.png', 's60270_a.png'],  # Combat/PvP themed  
+            'BOTH': ['s60130_a.png', 's60150_a.png', 's60170_a.png', 's60240_a.png'], # Balanced themed
+        }
+        
+        # Get emblems for current category, fallback to PVE if category not found
+        emblems = category_emblems.get(self.category, category_emblems['PVE'])
+        
+        # Use build ID to consistently select the same emblem for the same build
+        # This ensures the same build always shows the same default image
+        emblem_index = self.pk % len(emblems)
+        selected_emblem = emblems[emblem_index]
+        
+        return static(f'images/EMBLEMS/{selected_emblem}')
     
     def has_custom_image(self):
         """Check if build has any uploaded images"""

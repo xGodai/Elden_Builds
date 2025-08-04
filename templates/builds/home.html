@@ -118,16 +118,10 @@
     {% for build in recent_builds %}
     <div class="col-12 col-sm-6 col-lg-4">
       <div class="card h-100 border-0 shadow-sm">
-        {% if build.has_custom_image %}
-          <img src="{{ build.get_image_url }}" alt="{{ build.title }}" class="card-img-top" style="height: 180px; object-fit: cover;">
-        {% else %}
-          <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 180px;">
-            <div class="text-center">
-              <div class="text-muted mb-1" style="font-size: 2rem;">🛡️</div>
-              <small class="text-muted">No Image</small>
-            </div>
-          </div>
-        {% endif %}
+        <img src="{{ build.get_image_url }}" 
+             alt="{{ build.title }}" 
+             class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}"
+             style="height: 180px;">
         
         <div class="card-body p-3">
           <h5 class="card-title h6 mb-2">{{ build.title }}</h5>
