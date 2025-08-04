@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% block title %}Elden Ring Builds{% endblock %}</title>
     
@@ -12,6 +12,9 @@
           rel="stylesheet" 
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
           crossorigin="anonymous">
+    
+    <!-- Custom Responsive CSS -->
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
     
     {% block extra_css %}{% endblock %}
     
@@ -179,6 +182,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
             crossorigin="anonymous"></script>
+    
+    <!-- Custom Responsive Behavior JavaScript -->
+    <script src="{% static 'js/responsive-behavior.js' %}"></script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

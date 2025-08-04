@@ -2,58 +2,177 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-  <h2>{{ object.title }}</h2>
-  <p>{{ object.description }}</p>
-  <p><strong>Weapons:</strong> {{ object.weapons }}</p>
-  <p><strong>Armor:</strong> {{ object.armor }}</p>
-  <p><strong>Talismans:</strong> {{ object.talismans }}</p>
-  <p><strong>Spells:</strong> {{ object.spells }}</p>
-  
-  <!-- Build Images -->
-  {% if object.images.exists %}
-    <div class="row mb-4">
-      {% for image in object.images.all %}
-        <div class="col-md-4 mb-3">
-          <div class="position-relative">
-            <img src="{{ image.image.url }}" alt="{{ image.caption|default:object.title }}" class="img-fluid rounded">
-            {% if image.is_primary %}
-              <span class="badge bg-primary position-absolute top-0 end-0 m-2">Primary</span>
-            {% endif %}
-            {% if image.caption %}
-              <div class="mt-2">
-                <small class="text-muted">{{ image.caption }}</small>
+<div class="container py-3 py-md-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Build Header -->
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start mb-3 mb-md-4">
+        <div class="flex-grow-1 mb-3 mb-sm-0">
+          <h1 class="h2 h-md-1 mb-2">{{ object.title }}</h1>
+          <span class="badge bg-primary mb-2">{{ object.get_category_display }}</span>
+        </div>
+        {% if user == object.user %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'build-update' object.pk %}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{% url 'build-delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Build Description -->
+      <div class="mb-4">
+        <p class="lead">{{ object.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Main Content -->
+    <div class="col-12 col-lg-8">
+      <!-- Build Equipment -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="mb-0">⚔️ Equipment & Build Details</h4>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <p><strong>🗡️ Weapons:</strong></p>
+              <p class="text-muted">{{ object.weapons|default:"Not specified" }}</p>
+            </div>
+            <div class="col-12 col-md-6">
+              <p><strong>🛡️ Armor:</strong></p>
+              <p class="text-muted">{{ object.armor|default:"Not specified" }}</p>
+            </div>
+            <div class="col-12 col-md-6">
+              <p><strong>💎 Talismans:</strong></p>
+              <p class="text-muted">{{ object.talismans|default:"Not specified" }}</p>
+            </div>
+            <div class="col-12 col-md-6">
+              <p><strong>⚡ Spells:</strong></p>
+              <p class="text-muted">{{ object.spells|default:"Not specified" }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Build Images -->
+      {% if object.images.exists %}
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="mb-0">🖼️ Build Images</h4>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              {% for image in object.images.all %}
+                <div class="col-12 col-sm-6 col-md-4">
+                  <div class="position-relative">
+                    <img src="{{ image.image.url }}" alt="{{ image.caption|default:object.title }}" class="img-fluid rounded w-100" style="height: 200px; object-fit: cover;">
+                    {% if image.is_primary %}
+                      <span class="badge bg-primary position-absolute top-0 end-0 m-2">Primary</span>
+                    {% endif %}
+                    {% if image.caption %}
+                      <div class="mt-2">
+                        <small class="text-muted">{{ image.caption }}</small>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-12 col-lg-4">
+      <!-- Build Stats -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">📊 Build Stats</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span><strong>❤️ Likes:</strong></span>
+            <span class="badge bg-danger">{{ object.total_likes }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span><strong>💬 Comments:</strong></span>
+            <span class="badge bg-info">{{ object.comments.count }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span><strong>📅 Created:</strong></span>
+            <small class="text-muted">{{ object.created_at|date:"M d, Y" }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author Info -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">👤 Author</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <img src="{{ object.user.profile.get_profile_picture_url }}" 
+                 alt="{{ object.user.username }}'s Profile" 
+                 class="rounded-circle me-3"
+                 style="width: 48px; height: 48px; object-fit: cover;">
+            <div>
+              <div class="fw-bold">
+                <a href="{% url 'user-profile' object.user.username %}" class="text-decoration-none">
+                  {{ object.user.profile.get_display_name }}
+                </a>
               </div>
+              <small class="text-muted">{{ object.created_at|timesince }} ago</small>
+            </div>
+          </div>
+          
+          <!-- Like Button -->
+          {% if user.is_authenticated %}
+            <form action="{% url 'build-like' object.pk %}" method="post" class="d-grid">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              {% if user in object.liked_by.all %}
+                <button type="submit" class="btn btn-danger">
+                  ❤️ Unlike Build
+                </button>
+              {% else %}
+                <button type="submit" class="btn btn-outline-danger">
+                  ❤️ Like Build
+                </button>
+              {% endif %}
+            </form>
+          {% else %}
+            <div class="text-center">
+              <p class="text-muted mb-2">Want to like this build?</p>
+              <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Log in</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">🎯 Quick Actions</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <a href="{% url 'build-list' %}" class="btn btn-outline-primary btn-sm">
+              ← Back to Builds
+            </a>
+            {% if user.is_authenticated %}
+              <a href="{% url 'build-create' %}" class="btn btn-outline-success btn-sm">
+                ➕ Create New Build
+              </a>
             {% endif %}
           </div>
         </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="mb-4">
-      <div class="bg-light rounded d-flex align-items-center justify-content-center text-center" style="height: 300px;">
-        <div>
-          <div style="font-size: 3rem;">🛡️</div>
-          <div class="fw-bold">{{ object.title }}</div>
-          <small class="text-muted">No images uploaded</small>
-        </div>
       </div>
     </div>
-  {% endif %}
-  
-  <div class="d-flex align-items-center mb-2">
-    <img src="{{ object.user.profile.get_profile_picture_url }}" 
-         alt="{{ object.user.username }}'s Profile" 
-         class="rounded-circle me-2"
-         style="width: 24px; height: 24px; object-fit: cover;">
-    <p class="mb-0"><strong>Created by:</strong> 
-      <a href="{% url 'user-profile' object.user.username %}" class="text-decoration-none">
-        {{ object.user.profile.get_display_name }}
-      </a>
-    </p>
   </div>
-  <p><strong>Category:</strong> {{ object.get_category_display }}</p>
-  <p><strong>Created:</strong> {{ object.created_at|date:"M d, Y" }}</p>
 
   <p><strong>Likes:</strong> {{ object.total_likes }}</p>
 

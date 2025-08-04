@@ -2,23 +2,23 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
+<div class="container py-3 py-md-4">
   <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card">
+    <div class="col-12 col-lg-10 col-xl-8">
+      <div class="card border-0 shadow">
         <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">
+          <h2 class="mb-0 h4">
             ➕ {% if form.instance.pk %}Edit{% else %}Create{% endif %} Build
           </h2>
         </div>
         
-        <div class="card-body">
+        <div class="card-body p-3 p-md-4">
           <form method="POST" enctype="multipart/form-data" id="build-form" novalidate>
             {% csrf_token %}
             
             <!-- Build Information -->
-            <div class="row">
-              <div class="col-md-6">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
                     📝 Build Title
@@ -30,7 +30,7 @@
                 </div>
               </div>
               
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
                     🏷️ Category
@@ -54,12 +54,12 @@
             </div>
             
             <!-- Equipment Fields -->
-            <div class="row">
-              <div class="col-md-6">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.weapons.id_for_label }}" class="form-label fw-bold">
                     ⚔️ Weapons
-                    <small class="text-muted fw-normal">(separate multiple items with commas)</small>
+                    <small class="text-muted fw-normal d-block d-sm-inline">(separate multiple items with commas)</small>
                   </label>
                   {{ form.weapons }}
                   {% if form.weapons.errors %}
@@ -70,7 +70,7 @@
                 <div class="mb-3">
                   <label for="{{ form.armor.id_for_label }}" class="form-label fw-bold">
                     🛡️ Armor
-                    <small class="text-muted fw-normal">(separate multiple items with commas)</small>
+                    <small class="text-muted fw-normal d-block d-sm-inline">(separate multiple items with commas)</small>
                   </label>
                   {{ form.armor }}
                   {% if form.armor.errors %}
@@ -79,11 +79,11 @@
                 </div>
               </div>
               
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="mb-3">
                   <label for="{{ form.talismans.id_for_label }}" class="form-label fw-bold">
                     💎 Talismans
-                    <small class="text-muted fw-normal">(separate multiple items with commas)</small>
+                    <small class="text-muted fw-normal d-block d-sm-inline">(separate multiple items with commas)</small>
                   </label>
                   {{ form.talismans }}
                   {% if form.talismans.errors %}
@@ -94,7 +94,7 @@
                 <div class="mb-3">
                   <label for="{{ form.spells.id_for_label }}" class="form-label fw-bold">
                     ⚡ Spells 
-                    <small class="text-muted fw-normal">(Optional - separate multiple items with commas)</small>
+                    <small class="text-muted fw-normal d-block d-sm-inline">(Optional - separate multiple items with commas)</small>
                   </label>
                   {{ form.spells }}
                   {% if form.spells.errors %}

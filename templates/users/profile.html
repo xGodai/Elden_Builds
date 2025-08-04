@@ -2,51 +2,48 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
   <div class="row">
     <!-- Profile Header -->
-    <div class="col-md-12 mb-4">
-      <div class="card">
-        <div class="card-body">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
           <div class="row align-items-center">
-            <div class="col-md-3 text-center">
+            <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
               <img src="{{ user_profile.get_profile_picture_url }}" 
                    alt="{{ profile_user.username }}'s Profile Picture" 
                    class="rounded-circle img-fluid profile-picture"
-                   style="width: 150px; height: 150px; object-fit: cover;">
+                   style="width: 120px; height: 120px; object-fit: cover;">
             </div>
-            <div class="col-md-6">
-              <h2>{{ user_profile.get_display_name }}</h2>
-              <p class="text-muted">@{{ profile_user.username }}</p>
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+              <h2 class="h3 mb-2">{{ user_profile.get_display_name }}</h2>
+              <p class="text-muted mb-2">@{{ profile_user.username }}</p>
               {% if profile_user.first_name or profile_user.last_name %}
-                <p><strong>{{ profile_user.first_name }} {{ profile_user.last_name }}</strong></p>
+                <p class="mb-2"><strong>{{ profile_user.first_name }} {{ profile_user.last_name }}</strong></p>
               {% endif %}
               {% if user_profile.bio %}
-                <p class="mt-2">{{ user_profile.bio }}</p>
+                <p class="mt-2 mb-3">{{ user_profile.bio }}</p>
               {% endif %}
               
-              <div class="row mt-3">
+              <div class="row g-2">
                 {% if user_profile.location %}
-                  <div class="col-sm-6">
+                  <div class="col-12 col-sm-6">
                     <small class="text-muted">📍 {{ user_profile.location }}</small>
                   </div>
                 {% endif %}
                 {% if user_profile.favorite_weapon %}
-                  <div class="col-sm-6">
+                  <div class="col-12 col-sm-6">
                     <small class="text-muted">⚔️ {{ user_profile.favorite_weapon }}</small>
                   </div>
                 {% endif %}
-              </div>
-              
-              <div class="row mt-2">
-                <div class="col-sm-12">
-                  <small class="text-muted">Joined {{ profile_user.date_joined|date:"M Y" }}</small>
+                <div class="col-12">
+                  <small class="text-muted">📅 Joined {{ profile_user.date_joined|date:"M Y" }}</small>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-md-3">
               <div class="text-center">
-                <div class="row">
+                <div class="row g-2">
                   <div class="col-4">
                     <h5 class="mb-0">{{ user_profile.total_builds }}</h5>
                     <small class="text-muted">Builds</small>
@@ -62,8 +59,10 @@
                 </div>
                 
                 {% if is_own_profile %}
-                  <div class="mt-3">
-                    <a href="{% url 'profile-edit' %}" class="btn btn-primary btn-sm">Edit Profile</a>
+                  <div class="mt-3 d-grid">
+                    <a href="{% url 'profile-edit' %}" class="btn btn-primary btn-sm">
+                      ✏️ Edit Profile
+                    </a>
                   </div>
                 {% endif %}
               </div>
@@ -76,24 +75,24 @@
 
   <!-- Profile Tabs -->
   <div class="row">
-    <div class="col-md-12">
-      <ul class="nav nav-tabs" id="profileTabs">
+    <div class="col-12">
+      <ul class="nav nav-tabs nav-fill" id="profileTabs">
         <li class="nav-item">
           <a class="nav-link {% if current_tab == 'builds' %}active{% endif %}" 
              href="{% url 'user-profile' profile_user.username %}?tab=builds">
-            Builds ({{ user_builds.count }})
+            <span class="d-none d-sm-inline">📦 </span>Builds<span class="d-none d-md-inline"> ({{ user_builds.count }})</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if current_tab == 'liked' %}active{% endif %}" 
              href="{% url 'user-profile' profile_user.username %}?tab=liked">
-            Liked Builds ({{ liked_builds.count }})
+            <span class="d-none d-sm-inline">❤️ </span>Liked<span class="d-none d-md-inline"> ({{ liked_builds.count }})</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if current_tab == 'comments' %}active{% endif %}" 
              href="{% url 'user-profile' profile_user.username %}?tab=comments">
-            Comments ({{ user_comments.count }})
+            <span class="d-none d-sm-inline">💬 </span>Comments<span class="d-none d-md-inline"> ({{ user_comments.count }})</span>
           </a>
         </li>
       </ul>
@@ -103,12 +102,15 @@
         {% if current_tab == 'builds' %}
           <div class="tab-pane fade show active">
             {% if user_builds %}
-              <div class="row">
+              <div class="row g-4">
                 {% for build in user_builds %}
-                  <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                      {% if build.image %}
-                        <img src="{{ build.image.url }}" class="card-img-top" alt="{{ build.title }}" style="height: 200px; object-fit: cover;">
+                  <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                      {% if build.get_primary_image %}
+                        <img src="{{ build.get_primary_image.get_image_url }}" 
+                             class="card-img-top" 
+                             alt="{{ build.title }}" 
+                             style="height: 200px; object-fit: cover;">
                       {% endif %}
                       
                       <div class="card-body d-flex flex-column">
@@ -119,23 +121,23 @@
                         <p class="card-text text-muted">{{ build.description|truncatewords:15 }}</p>
                         
                         <div class="mt-auto">
-                          <div class="d-flex justify-content-between align-items-center mb-2">
+                          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-2 gap-2">
                             <span class="badge bg-secondary">{{ build.get_category_display }}</span>
                             <small class="text-muted">{{ build.created_at|date:"M d, Y" }}</small>
                           </div>
                           
-                          <div class="d-flex justify-content-between align-items-center">
+                          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
                             <div class="build-stats">
                               <small class="text-muted">
-                                <i class="text-danger">❤</i> {{ build.total_likes }}
-                                <span class="ms-2">
-                                  <i class="text-primary">💬</i> {{ build.comments.count }}
-                                </span>
+                                ❤️ {{ build.total_likes }}
+                                <span class="ms-2">💬 {{ build.comments.count }}</span>
                               </small>
                             </div>
                             {% if is_own_profile %}
                               <div class="build-actions">
-                                <a href="{% url 'build-update' build.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a href="{% url 'build-update' build.pk %}" class="btn btn-sm btn-outline-secondary">
+                                  ✏️ Edit
+                                </a>
                               </div>
                             {% endif %}
                           </div>
@@ -147,7 +149,7 @@
               </div>
             {% else %}
               <div class="text-center py-5">
-                <h4 class="text-muted">No builds yet</h4>
+                <h4 class="text-muted">📦 No builds yet</h4>
                 {% if is_own_profile %}
                   <p class="text-muted">Create your first build to get started!</p>
                   <a href="{% url 'build-create' %}" class="btn btn-primary">Create New Build</a>
