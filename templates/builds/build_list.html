@@ -64,72 +64,72 @@
       <div class="row g-3 g-md-4">
         {% for build in builds %}
           <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-              <!-- Build Image -->
-              <img src="{{ build.get_image_url }}" 
-                   alt="{{ build.title }}" 
-                   class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}"
-                   style="height: 180px;">
-              
-              <!-- Category Badge -->
-              <div class="position-absolute" style="top: 0.5rem; right: 0.5rem;">
-                <span class="badge bg-secondary shadow-sm">
-                  {% if build.category == 'PVE' %}
-                    PvE
-                  {% elif build.category == 'PVP' %}
-                    PvP
-                  {% else %}
-                    Both
-                  {% endif %}
-                </span>
-              </div>
-              
-              <!-- Build Content -->
-              <div class="card-body p-3">
-                <h2 class="card-title h6 mb-2">
-                  <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">
-                    {{ build.title }}
-                  </a>
-                </h2>
-                <p class="card-text text-muted small mb-3">{{ build.description|truncatewords:12 }}</p>
+            <a href="{% url 'build-detail' build.pk %}" class="text-decoration-none">
+              <div class="card h-100 border-0 shadow-sm card-hover-effect">
+                <!-- Build Image -->
+                <img src="{{ build.get_image_url }}" 
+                     alt="{{ build.title }}" 
+                     class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}"
+                     style="height: 180px;">
                 
-                <!-- Build Stats -->
-                <div class="d-flex justify-content-between text-muted small mb-3">
-                  <span>❤️ {{ build.total_likes }}</span>
-                  <span>💬 {{ build.comments.count }}</span>
-                  <span class="d-none d-sm-inline">👁️ {{ build.views|default:0 }}</span>
+                <!-- Category Badge -->
+                <div class="position-absolute" style="top: 0.5rem; right: 0.5rem;">
+                  <span class="badge bg-secondary shadow-sm">
+                    {% if build.category == 'PVE' %}
+                      PvE
+                    {% elif build.category == 'PVP' %}
+                      PvP
+                    {% else %}
+                      Both
+                    {% endif %}
+                  </span>
                 </div>
                 
-                <!-- Build Author -->
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center flex-grow-1 me-2">
-                    <img src="{{ build.user.profile.get_profile_picture_url }}" 
-                         alt="{{ build.user.username }}'s Profile" 
-                         class="rounded-circle me-2"
-                         style="width: 24px; height: 24px; object-fit: cover;">
-                    <div class="min-w-0 flex-grow-1">
-                      <div class="fw-bold text-truncate">
-                        <a href="{% url 'user-profile' build.user.username %}" class="text-decoration-none small">
-                          {{ build.user.profile.get_display_name }}
-                        </a>
-                      </div>
-                      <small class="text-muted d-none d-sm-block">{{ build.created_at|timesince }} ago</small>
-                    </div>
+                <!-- Build Content -->
+                <div class="card-body p-3">
+                  <h2 class="card-title h6 mb-2 text-body">{{ build.title }}</h2>
+                  <p class="card-text text-muted small mb-3">{{ build.description|truncatewords:12 }}</p>
+                  
+                  <!-- Build Stats -->
+                  <div class="d-flex justify-content-between text-muted small mb-3">
+                    <span>❤️ {{ build.total_likes }}</span>
+                    <span>💬 {{ build.comments.count }}</span>
+                    <span class="d-none d-sm-inline">👁️ {{ build.views|default:0 }}</span>
                   </div>
                   
-                  {% if user.is_authenticated %}
-                    <form action="{% url 'build-like' build.pk %}" method="post" class="d-inline">
-                      {% csrf_token %}
-                      <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                      <button type="submit" class="btn btn-outline-danger btn-sm {% if build.user_has_liked %}bg-danger text-white{% endif %}" 
-                              title="{% if build.user_has_liked %}Unlike this build{% else %}Like this build{% endif %}">
-                        ❤️
-                      </button>
-                    </form>
-                  {% endif %}
+                  <!-- Build Author -->
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center flex-grow-1 me-2">
+                      <img src="{{ build.user.profile.get_profile_picture_url }}" 
+                           alt="{{ build.user.username }}'s Profile" 
+                           class="rounded-circle me-2"
+                           style="width: 24px; height: 24px; object-fit: cover;">
+                      <div class="min-w-0 flex-grow-1">
+                        <div class="fw-bold text-truncate">
+                          <span class="text-decoration-none small text-body">
+                            {{ build.user.profile.get_display_name }}
+                          </span>
+                        </div>
+                        <small class="text-muted d-none d-sm-block">{{ build.created_at|timesince }} ago</small>
+                      </div>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                      <div class="like-button-container" onclick="event.preventDefault(); event.stopPropagation();">
+                        <form action="{% url 'build-like' build.pk %}" method="post" class="d-inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                          <button type="submit" class="btn btn-outline-danger btn-sm {% if build.user_has_liked %}bg-danger text-white{% endif %}" 
+                                  title="{% if build.user_has_liked %}Unlike this build{% else %}Like this build{% endif %}">
+                            ❤️
+                          </button>
+                        </form>
+                      </div>
+                    {% endif %}
+                  </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
         {% endfor %}
       </div>

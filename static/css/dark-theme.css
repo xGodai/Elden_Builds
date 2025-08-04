@@ -803,3 +803,22 @@ a:focus {
 .card-hover-effect:hover .text-body {
     color: var(--accent-primary) !important;
 }
+
+/* Like Button in Clickable Cards */
+.like-button-container {
+    position: relative;
+    z-index: 10;
+}
+
+.like-button-container .btn {
+    transition: all 0.2s ease !important;
+}
+
+.like-button-container .btn:hover {
+    transform: scale(1.1) !important;
+}
+
+/* Prevent card click when clicking like button */
+.like-button-container form {
+    pointer-events: all;
+}
