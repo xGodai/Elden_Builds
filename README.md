@@ -163,9 +163,9 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 🙏 Acknowledgments
 
 - **FromSoftware** for creating Elden Ring
-- **Elden Ring Fan API** for providing game data
-- **Django Community** for the excellent web framework
-- **Bootstrap Team** for the responsive CSS framework
+- **Elden Ring Fan API** for providing Game Data
+- **Django Community** for the excellent Web Framework
+- **Bootstrap Team** for the responsive CSS Framework
 
 ## 📞 Support
 
