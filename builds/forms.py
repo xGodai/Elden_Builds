@@ -6,7 +6,9 @@ from .models import Build, BuildImage, Comment
 class BuildForm(forms.ModelForm):
     class Meta:
         model = Build
-        fields = ['title', 'description', 'weapons', 'armor', 'talismans', 'spells', 'category']
+        fields = ['title', 'description', 'weapons', 'armor', 'talismans', 'spells', 'category',
+                 'level', 'vigor', 'mind', 'endurance', 'strength', 'dexterity', 
+                 'intelligence', 'faith', 'arcane']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -35,6 +37,61 @@ class BuildForm(forms.ModelForm):
             }),
             'category': forms.Select(attrs={
                 'class': 'form-select'
+            }),
+            # Player Stats
+            'level': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Character level',
+                'min': '1',
+                'max': '713'
+            }),
+            'vigor': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Vigor',
+                'min': '1',
+                'max': '99'
+            }),
+            'mind': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Mind',
+                'min': '1',
+                'max': '99'
+            }),
+            'endurance': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Endurance',
+                'min': '1',
+                'max': '99'
+            }),
+            'strength': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Strength',
+                'min': '1',
+                'max': '99'
+            }),
+            'dexterity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Dexterity',
+                'min': '1',
+                'max': '99'
+            }),
+            'intelligence': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Intelligence',
+                'min': '1',
+                'max': '99'
+            }),
+            'faith': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Faith',
+                'min': '1',
+                'max': '99'
+            }),
+            'arcane': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Arcane',
+                'min': '1',
+                'max': '99'
             })
         }
 

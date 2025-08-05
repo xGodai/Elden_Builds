@@ -55,6 +55,107 @@
           </div>
         </div>
       </div>
+
+      <!-- Player Stats -->
+      {% if object.has_stats %}
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="mb-0">📊 Character Stats</h4>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            {% if object.level %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-primary fs-4">{{ object.level }}</div>
+                <small class="text-muted">Level</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.vigor %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-danger fs-4">{{ object.vigor }}</div>
+                <small class="text-muted">💖 Vigor</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.mind %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-info fs-4">{{ object.mind }}</div>
+                <small class="text-muted">🧠 Mind</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.endurance %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-success fs-4">{{ object.endurance }}</div>
+                <small class="text-muted">🏃 Endurance</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.strength %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-warning fs-4">{{ object.strength }}</div>
+                <small class="text-muted">💪 Strength</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.dexterity %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-secondary fs-4">{{ object.dexterity }}</div>
+                <small class="text-muted">🏹 Dexterity</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.intelligence %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-primary fs-4">{{ object.intelligence }}</div>
+                <small class="text-muted">📚 Intelligence</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.faith %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-warning fs-4">{{ object.faith }}</div>
+                <small class="text-muted">⚡ Faith</small>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if object.arcane %}
+            <div class="col-12 col-sm-6 col-md-4">
+              <div class="text-center p-3 bg-light rounded">
+                <div class="fw-bold text-dark fs-4">{{ object.arcane }}</div>
+                <small class="text-muted">🔮 Arcane</small>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          
+          {% if object.get_total_stats %}
+          <div class="mt-3 text-center">
+            <small class="text-muted">
+              <strong>Total Stat Points:</strong> {{ object.get_total_stats }}
+            </small>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
       
       <!-- Build Images -->
       {% if object.images.exists %}

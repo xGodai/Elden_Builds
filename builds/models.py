@@ -29,6 +29,18 @@ class Build(models.Model):
     armor = models.CharField(max_length=100)
     talismans = models.CharField(max_length=100)
     spells = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Player Stats
+    level = models.PositiveIntegerField(blank=True, null=True, help_text="Character level")
+    vigor = models.PositiveIntegerField(blank=True, null=True, help_text="Vigor stat")
+    mind = models.PositiveIntegerField(blank=True, null=True, help_text="Mind stat")
+    endurance = models.PositiveIntegerField(blank=True, null=True, help_text="Endurance stat")
+    strength = models.PositiveIntegerField(blank=True, null=True, help_text="Strength stat")
+    dexterity = models.PositiveIntegerField(blank=True, null=True, help_text="Dexterity stat")
+    intelligence = models.PositiveIntegerField(blank=True, null=True, help_text="Intelligence stat")
+    faith = models.PositiveIntegerField(blank=True, null=True, help_text="Faith stat")
+    arcane = models.PositiveIntegerField(blank=True, null=True, help_text="Arcane stat")
+    
     # Remove single image field - we'll use BuildImage model instead
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='PVE')
     liked_by = models.ManyToManyField(User, related_name='liked_builds', blank=True)
@@ -87,6 +99,18 @@ class Build(models.Model):
     def can_add_image(self):
         """Check if build can have more images (max 3)"""
         return self.images.count() < 3
+    
+    def get_total_stats(self):
+        """Calculate total stat points allocated (excluding level)"""
+        stats = [self.vigor, self.mind, self.endurance, self.strength, 
+                self.dexterity, self.intelligence, self.faith, self.arcane]
+        return sum(stat for stat in stats if stat is not None)
+    
+    def has_stats(self):
+        """Check if any stats are filled in"""
+        return any([self.level, self.vigor, self.mind, self.endurance, 
+                   self.strength, self.dexterity, self.intelligence, 
+                   self.faith, self.arcane])
 
     def get_absolute_url(self):
         return reverse('build-detail', kwargs={'pk': self.pk})
