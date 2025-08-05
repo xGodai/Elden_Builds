@@ -110,8 +110,8 @@
         </div>
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <span><strong>❤️ Likes:</strong></span>
-            <span class="badge bg-danger">{{ object.total_likes }}</span>
+            <span><strong>⚡ Grace:</strong></span>
+            <span class="badge bg-warning text-dark">{{ object.total_likes }}</span>
           </div>
           <div class="d-flex justify-content-between align-items-center mb-3">
             <span><strong>💬 Comments:</strong></span>
@@ -151,18 +151,18 @@
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ request.get_full_path }}">
               {% if user in object.liked_by.all %}
-                <button type="submit" class="btn btn-danger">
-                  ❤️ Unlike Build
+                <button type="submit" class="btn btn-warning">
+                  ⚡ Remove Grace
                 </button>
               {% else %}
-                <button type="submit" class="btn btn-outline-danger">
-                  ❤️ Like Build
+                <button type="submit" class="btn btn-outline-warning">
+                  ⚡ Grace Build
                 </button>
               {% endif %}
             </form>
           {% else %}
             <div class="text-center">
-              <p class="text-muted mb-2">Want to like this build?</p>
+              <p class="text-muted mb-2">Want to grace this build?</p>
               <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Log in</a>
             </div>
           {% endif %}

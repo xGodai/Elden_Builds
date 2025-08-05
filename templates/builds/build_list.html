@@ -49,7 +49,7 @@
         <div class="col-6 col-md-3">
           <select id="sort-select" class="form-select">
             <option value="created_at">Newest First</option>
-            <option value="likes">Most Liked</option>
+            <option value="likes">Most Graced</option>
             <option value="title">Alphabetical</option>
             <option value="updated_at">Recently Updated</option>
           </select>
@@ -92,7 +92,7 @@
                   
                   <!-- Build Stats -->
                   <div class="d-flex justify-content-between text-muted small mb-3">
-                    <span>❤️ {{ build.total_likes }}</span>
+                    <span>⚡ {{ build.total_likes }} Grace</span>
                     <span>💬 {{ build.comments.count }}</span>
                     <span class="d-none d-sm-inline">👁️ {{ build.views|default:0 }}</span>
                   </div>
@@ -120,8 +120,8 @@
                           {% csrf_token %}
                           <input type="hidden" name="next" value="{{ request.get_full_path }}">
                           <button type="submit" class="btn btn-outline-danger btn-sm {% if build.user_has_liked %}bg-danger text-white{% endif %}" 
-                                  title="{% if build.user_has_liked %}Unlike this build{% else %}Like this build{% endif %}">
-                            ❤️
+                                  title="{% if build.user_has_liked %}Remove Grace from this build{% else %}Grace this build{% endif %}">
+                            ⚡
                           </button>
                         </form>
                       </div>
