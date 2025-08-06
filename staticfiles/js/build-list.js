@@ -39,10 +39,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners
     if (categorySelect) {
         categorySelect.addEventListener('change', updateBuilds);
+        
+        // Set initial category value if present in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+            categorySelect.value = categoryParam;
+        }
     }
     
     if (sortSelect) {
         sortSelect.addEventListener('change', updateBuilds);
+        
+        // Set initial sort value if present in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sortParam = urlParams.get('sort');
+        if (sortParam) {
+            sortSelect.value = sortParam;
+        } else {
+            sortSelect.value = 'newest'; // Default value
+        }
     }
     
     // Search with debouncing
