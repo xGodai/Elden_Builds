@@ -22,7 +22,11 @@
     {% block extra_css %}{% endblock %}
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon_io/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/favicon_io/site.webmanifest' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon.ico' %}">
     
     <!-- Meta tags for SEO -->
     <meta name="description" content="{% block description %}Discover, share, and perfect your Elden Ring character builds. Join thousands of Tarnished warriors sharing strategies and battle-tested builds.{% endblock %}">
