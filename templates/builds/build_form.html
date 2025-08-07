@@ -230,11 +230,11 @@
               <div class="image-formset">
                 {{ image_formset.management_form }}
                 
-                <div id="image-forms">
+                <div id="image-forms" class="image-forms-container">
                   {% for form in image_formset %}
-                    <div class="image-upload-item">
+                    <div class="image-upload-item mb-3 p-3 border rounded">
                       <div class="row align-items-center">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                           <label class="form-label">
                             📁 Image File
                           </label>
@@ -242,9 +242,15 @@
                           {% if form.image.errors %}
                             <div class="text-danger small">{{ form.image.errors }}</div>
                           {% endif %}
+                          <div class="image-preview mt-2">
+                            {% if form.instance.image %}
+                              <img src="{{ form.instance.image.url }}" alt="Current image" 
+                                   style="max-width: 100px; max-height: 100px; object-fit: cover;">
+                            {% endif %}
+                          </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                           <label class="form-label">Caption</label>
                           {{ form.caption }}
                           {% if form.caption.errors %}
@@ -259,14 +265,20 @@
                               Primary
                             </label>
                           </div>
-                          
+                        </div>
+                        
+                        <div class="col-md-2">
                           {% if form.instance.pk %}
-                            <div class="form-check mt-2">
+                            <div class="form-check">
                               {{ form.DELETE }}
                               <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
-                                Delete
+                                🗑️ Delete
                               </label>
                             </div>
+                          {% else %}
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-image-btn">
+                              🗑️ Remove
+                            </button>
                           {% endif %}
                         </div>
                       </div>
@@ -276,6 +288,52 @@
                       {% endfor %}
                     </div>
                   {% endfor %}
+                </div>
+                
+                <button type="button" id="add-image-btn" class="btn btn-outline-primary btn-sm mb-3">
+                  ➕ Add Another Image
+                </button>
+                
+                <!-- Hidden empty form template for JavaScript -->
+                <div id="empty-image-form" style="display: none;">
+                  <div class="image-upload-item mb-3 p-3 border rounded">
+                    <div class="row align-items-center">
+                      <div class="col-md-5">
+                        <label class="form-label">
+                          📁 Image File
+                        </label>
+                        <input type="file" name="images-__prefix__-image" 
+                               class="form-control" accept="image/*" 
+                               id="id_images-__prefix__-image">
+                        <div class="image-preview mt-2"></div>
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <label class="form-label">Caption</label>
+                        <input type="text" name="images-__prefix__-caption" 
+                               class="form-control" placeholder="Optional image caption"
+                               id="id_images-__prefix__-caption">
+                      </div>
+                      
+                      <div class="col-md-2">
+                        <div class="form-check">
+                          <input type="checkbox" name="images-__prefix__-is_primary" 
+                                 class="form-check-input" id="id_images-__prefix__-is_primary">
+                          <label class="form-check-label" for="id_images-__prefix__-is_primary">
+                            Primary
+                          </label>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-image-btn">
+                          🗑️ Remove
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <input type="hidden" name="images-__prefix__-id" id="id_images-__prefix__-id">
+                  </div>
                 </div>
                 
                 <div class="file-upload-info">
@@ -311,4 +369,5 @@
 
 {% block extra_js %}
 <script src="{% static 'js/elden-ring-api.js' %}"></script>
+<script src="{% static 'js/build-form.js' %}"></script>
 {% endblock %}

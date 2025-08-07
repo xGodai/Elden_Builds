@@ -823,3 +823,66 @@ a:focus {
 .like-button-container form {
     pointer-events: all;
 }
+
+/* Image Upload Formset Styles */
+.image-forms-container {
+    position: relative;
+}
+
+.image-upload-item {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-primary) !important;
+    transition: all 0.3s ease;
+}
+
+.image-upload-item:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-focus) !important;
+}
+
+.image-forms-container.drag-over {
+    background-color: var(--bg-tertiary);
+    border: 2px dashed var(--accent-primary);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.image-preview img {
+    border-radius: 4px;
+    border: 1px solid var(--border-secondary);
+    box-shadow: var(--shadow-light);
+}
+
+.remove-image-btn {
+    background-color: transparent !important;
+    border-color: var(--accent-danger) !important;
+    color: var(--accent-danger) !important;
+}
+
+.remove-image-btn:hover {
+    background-color: var(--accent-danger) !important;
+    color: var(--text-primary) !important;
+}
+
+#add-image-btn {
+    background-color: transparent !important;
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+}
+
+#add-image-btn:hover {
+    background-color: var(--accent-primary) !important;
+    color: var(--bg-primary) !important;
+}
+
+/* File input styling */
+.image-upload-item input[type="file"] {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.image-upload-item input[type="file"]:focus {
+    border-color: var(--border-focus) !important;
+    box-shadow: 0 0 0 0.2rem rgba(184, 134, 11, 0.25) !important;
+}

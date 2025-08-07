@@ -148,10 +148,11 @@ BuildImageFormSet = inlineformset_factory(
     Build,
     BuildImage,
     form=BuildImageForm,
-    extra=1,
+    extra=1,  # Start with 1 empty form
     max_num=3,
     min_num=0,
     can_delete=True,
+    validate_max=True,
     fields=['image', 'is_primary', 'caption']
 )
 

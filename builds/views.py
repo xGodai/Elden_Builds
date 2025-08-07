@@ -153,7 +153,7 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
             context = self.get_context_data()
             image_formset = context['image_formset']
 
-            # Only process images if formset is valid or if it's just empty
+            # Only process images if formset is valid
             if image_formset.is_valid():
                 image_formset.instance = self.object
                 image_formset.save()
@@ -164,12 +164,27 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
+            else:
+                # If formset is invalid, show errors but don't fail
+                messages.warning(
+                    self.request,
+                    'Build created but some images had errors. '
+                    'Please edit to fix image issues.'
+                )
 
             # Always succeed if the main form is valid - images are optional
             messages.success(self.request, 'Build created successfully!')
             return super().form_valid(form)
 
     def form_invalid(self, form):
+        # Add image formset errors to context
+        context = self.get_context_data()
+        image_formset = context['image_formset']
+        if not image_formset.is_valid():
+            messages.error(
+                self.request,
+                'Please fix the errors in the form and image uploads.'
+            )
         return super().form_invalid(form)
 
 
@@ -208,10 +223,28 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
+            else:
+                # If formset is invalid, show errors but don't fail
+                messages.warning(
+                    self.request,
+                    'Build updated but some images had errors. '
+                    'Please check image uploads.'
+                )
 
             # Always succeed if the main form is valid - images are optional
             messages.success(self.request, 'Build updated successfully!')
             return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Add image formset errors to context  
+        context = self.get_context_data()
+        image_formset = context['image_formset']
+        if not image_formset.is_valid():
+            messages.error(
+                self.request,
+                'Please fix the errors in the form and image uploads.'
+            )
+        return super().form_invalid(form)
 
     def test_func(self):
         build = self.get_object()
