@@ -93,7 +93,7 @@
                   
                   <!-- Build Stats -->
                   <div class="d-flex justify-content-between text-muted small mb-3">
-                    <span>⚡ {{ build.total_likes }} Grace</span>
+                    <span data-grace-count>⚡ {{ build.total_likes }} Grace</span>
                     <span>💬 {{ build.comments.count }}</span>
                     <span class="d-none d-sm-inline">👁️ {{ build.views|default:0 }}</span>
                   </div>
@@ -114,19 +114,6 @@
                         <small class="text-muted d-none d-sm-block">{{ build.created_at|timesince }} ago</small>
                       </div>
                     </div>
-                    
-                    {% if user.is_authenticated %}
-                      <div class="like-button-container" onclick="event.preventDefault(); event.stopPropagation();">
-                        <form action="{% url 'build-like' build.pk %}" method="post" class="d-inline">
-                          {% csrf_token %}
-                          <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                          <button type="submit" class="btn btn-outline-danger btn-sm {% if build.user_has_liked %}bg-danger text-white{% endif %}" 
-                                  title="{% if build.user_has_liked %}Remove Grace from this build{% else %}Grace this build{% endif %}">
-                            ⚡
-                          </button>
-                        </form>
-                      </div>
-                    {% endif %}
                   </div>
                 </div>
               </div>
