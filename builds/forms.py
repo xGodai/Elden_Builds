@@ -113,34 +113,58 @@ class BuildForm(forms.ModelForm):
 class BuildImageForm(forms.ModelForm):
     class Meta:
         model = BuildImage
-        fields = ['image', 'is_primary', 'caption']
+        fields = ['image', 'is_primary']
         widgets = {
             'image': forms.FileInput(attrs={
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
-            'caption': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Optional image caption'
-            }),
-            'is_primary': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            })
+            'is_primary': forms.HiddenInput()  # Hidden field, managed automatically
         }
 
     def clean_image(self):
         image = self.cleaned_data.get('image')
         if image:
-            # Check file size (10MB limit)
-            if image.size > 10 * 1024 * 1024:
-                raise forms.ValidationError(
-                    'Image file too large. Maximum size is 10MB.')
+            # Only validate size and type for new uploads, not existing CloudinaryResource
+            if hasattr(image, 'size') and hasattr(image, 'content_type'):
+                # Check file size (10MB limit)
+                if image.size > 10 * 1024 * 1024:
+                    raise forms.ValidationError(
+                        'Image file too large. Maximum size is 10MB.')
 
-            # Check file format
-            if not image.content_type.startswith('image/'):
-                raise forms.ValidationError('File must be an image.')
+                # Check file format
+                if not image.content_type.startswith('image/'):
+                    raise forms.ValidationError('File must be an image.')
 
         return image
+
+
+# Custom formset class for additional validation
+class BaseBuildImageFormSet(forms.BaseInlineFormSet):
+    def clean(self):
+        """Ensure max 3 images and first image is primary"""
+        if any(self.errors):
+            return
+        
+        valid_forms = []
+        
+        for form in self.forms:
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                valid_forms.append(form)
+        
+        # Ensure max 3 images
+        if len(valid_forms) > 3:
+            raise forms.ValidationError(
+                'You can upload a maximum of 3 images.'
+            )
+        
+        # Automatically set first image as primary
+        if valid_forms:
+            # Reset all primary flags
+            for form in valid_forms:
+                form.cleaned_data['is_primary'] = False
+            # Set first image as primary
+            valid_forms[0].cleaned_data['is_primary'] = True
 
 
 # Formset for handling multiple images
@@ -148,12 +172,13 @@ BuildImageFormSet = inlineformset_factory(
     Build,
     BuildImage,
     form=BuildImageForm,
+    formset=BaseBuildImageFormSet,
     extra=1,  # Start with 1 empty form
     max_num=3,
     min_num=0,
     can_delete=True,
     validate_max=True,
-    fields=['image', 'is_primary', 'caption']
+    fields=['image', 'is_primary']  # Removed caption
 )
 
 

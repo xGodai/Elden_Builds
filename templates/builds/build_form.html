@@ -227,122 +227,77 @@
                 <small class="text-muted">(Max 3 images, 10MB each)</small>
               </h5>
               
-              <div class="image-formset">
+              <div class="image-upload-section">
                 {{ image_formset.management_form }}
                 
-                <div id="image-forms" class="image-forms-container">
+                <!-- Existing Images (for editing) -->
+                <div id="existing-images" class="mb-3">
                   {% for form in image_formset %}
-                    <div class="image-upload-item mb-3 p-3 border rounded">
-                      <div class="row align-items-center">
-                        <div class="col-md-5">
-                          <label class="form-label">
-                            📁 Image File
-                          </label>
-                          {{ form.image }}
-                          {% if form.image.errors %}
-                            <div class="text-danger small">{{ form.image.errors }}</div>
-                          {% endif %}
-                          <div class="image-preview mt-2">
-                            {% if form.instance.image %}
-                              <img src="{{ form.instance.image.url }}" alt="Current image" 
-                                   style="max-width: 100px; max-height: 100px; object-fit: cover;">
-                            {% endif %}
-                          </div>
-                        </div>
-                        
-                        <div class="col-md-3">
-                          <label class="form-label">Caption</label>
-                          {{ form.caption }}
-                          {% if form.caption.errors %}
-                            <div class="text-danger small">{{ form.caption.errors }}</div>
-                          {% endif %}
-                        </div>
-                        
-                        <div class="col-md-2">
-                          <div class="form-check">
+                    {% if form.instance.pk %}
+                      <div class="existing-image mb-3 p-3 border rounded">
+                        <div class="row align-items-center">
+                          <div class="col-md-8">
+                            <div class="image-preview">
+                              <div class="preview-wrapper">
+                                <img src="{{ form.instance.image.url }}" alt="Build image" 
+                                     style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 4px;">
+                                {% if form.instance.is_primary %}
+                                  <span class="primary-badge">⭐ PRIMARY</span>
+                                {% endif %}
+                              </div>
+                            </div>
+                            {{ form.image }}
                             {{ form.is_primary }}
-                            <label class="form-check-label" for="{{ form.is_primary.id_for_label }}">
-                              Primary
-                            </label>
+                            {{ form.id }}
                           </div>
-                        </div>
-                        
-                        <div class="col-md-2">
-                          {% if form.instance.pk %}
+                          
+                          <div class="col-md-4 text-end">
                             <div class="form-check">
                               {{ form.DELETE }}
                               <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
-                                🗑️ Delete
+                                🗑️ Delete Image
                               </label>
                             </div>
-                          {% else %}
-                            <button type="button" class="btn btn-sm btn-outline-danger remove-image-btn">
-                              🗑️ Remove
-                            </button>
-                          {% endif %}
+                          </div>
                         </div>
                       </div>
-                      
-                      {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                      {% endfor %}
-                    </div>
+                    {% else %}
+                      <!-- Hidden fields for empty forms -->
+                      <div style="display: none;">
+                        {{ form.as_p }}
+                      </div>
+                    {% endif %}
                   {% endfor %}
                 </div>
                 
-                <button type="button" id="add-image-btn" class="btn btn-outline-primary btn-sm mb-3">
-                  ➕ Add Another Image
-                </button>
-                
-                <!-- Hidden empty form template for JavaScript -->
-                <div id="empty-image-form" style="display: none;">
-                  <div class="image-upload-item mb-3 p-3 border rounded">
-                    <div class="row align-items-center">
-                      <div class="col-md-5">
-                        <label class="form-label">
-                          📁 Image File
-                        </label>
-                        <input type="file" name="images-__prefix__-image" 
-                               class="form-control" accept="image/*" 
-                               id="id_images-__prefix__-image">
-                        <div class="image-preview mt-2"></div>
-                      </div>
-                      
-                      <div class="col-md-3">
-                        <label class="form-label">Caption</label>
-                        <input type="text" name="images-__prefix__-caption" 
-                               class="form-control" placeholder="Optional image caption"
-                               id="id_images-__prefix__-caption">
-                      </div>
-                      
-                      <div class="col-md-2">
-                        <div class="form-check">
-                          <input type="checkbox" name="images-__prefix__-is_primary" 
-                                 class="form-check-input" id="id_images-__prefix__-is_primary">
-                          <label class="form-check-label" for="id_images-__prefix__-is_primary">
-                            Primary
-                          </label>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-2">
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-image-btn">
-                          🗑️ Remove
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <input type="hidden" name="images-__prefix__-id" id="id_images-__prefix__-id">
-                  </div>
+                <!-- Simple Multiple File Upload -->
+                <div class="simple-upload mb-3">
+                  <label for="multiple-images" class="form-label fw-bold">
+                    📸 Choose Images (up to 3)
+                  </label>
+                  <input type="file" 
+                         id="multiple-images" 
+                         name="images-0-image" 
+                         multiple 
+                         accept="image/*" 
+                         class="form-control"
+                         max="3">
+                  <small class="form-text text-muted">
+                    Select up to 3 images at once. First image will be primary.
+                    {% if form.instance.pk %}<strong>Note:</strong> Uploading new images will replace all existing images.{% endif %}
+                  </small>
                 </div>
+                
+                <!-- Image Previews -->
+                <div id="image-previews" class="mb-3"></div>
                 
                 <div class="file-upload-info">
                   ℹ️ <strong>Upload Guidelines:</strong>
                   <ul class="mb-0 mt-1">
-                    <li>Maximum 3 images per build</li>
+                    <li>Select up to 3 images at once from your file browser</li>
+                    <li>First image will automatically be marked as primary</li>
                     <li>Each image must be under 10MB</li>
                     <li>Supported formats: JPG, PNG, WEBP</li>
-                    <li>Mark one image as "Primary" to be the main display image</li>
                   </ul>
                 </div>
               </div>
@@ -369,5 +324,5 @@
 
 {% block extra_js %}
 <script src="{% static 'js/elden-ring-api.js' %}"></script>
-<script src="{% static 'js/build-form.js' %}"></script>
+<script src="{% static 'js/image-upload.js' %}"></script>
 {% endblock %}

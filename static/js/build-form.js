@@ -4,8 +4,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const addImageBtn = document.getElementById('add-image-btn');
     const totalFormsInput = document.querySelector('#id_images-TOTAL_FORMS');
     
-    let formIndex = parseInt(totalFormsInput.value);
     const maxForms = 3; // Maximum 3 images per build
+    
+    // Function to count active (non-deleted) forms
+    function countActiveForms() {
+        const forms = imageFormsContainer.querySelectorAll('.image-upload-item');
+        return forms.length; // Simplified - just count visible forms
+    }
+    
+    // Function to get the next form index
+    function getNextFormIndex() {
+        return totalFormsInput ? parseInt(totalFormsInput.value) : 0;
+    }
     
     // Function to update form indices
     function updateFormIndices() {
@@ -27,8 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Update total forms count
-        totalFormsInput.value = forms.length;
+        // Update total forms count to actual number of forms
+        if (totalFormsInput) {
+            totalFormsInput.value = forms.length;
+        }
         
         // Update button visibility
         updateAddButtonVisibility();
@@ -36,21 +48,43 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to update add button visibility
     function updateAddButtonVisibility() {
-        const currentForms = imageFormsContainer.querySelectorAll('.image-upload-item').length;
+        const activeFormsCount = countActiveForms();
+        console.log('Active forms:', activeFormsCount, 'Max forms:', maxForms);
+        
         if (addImageBtn) {
-            addImageBtn.style.display = currentForms >= maxForms ? 'none' : 'block';
+            const shouldShow = activeFormsCount < maxForms;
+            addImageBtn.style.display = shouldShow ? 'block' : 'none';
+            console.log('Add button should show?', shouldShow);
         }
+        
+        // Update container data attribute for CSS styling
+        imageFormsContainer.setAttribute('data-max-reached', activeFormsCount >= maxForms);
     }
     
     // Function to create a new image form
     function createNewImageForm() {
+        const activeFormsCount = countActiveForms();
+        if (activeFormsCount >= maxForms) {
+            console.log('Cannot add more forms. Active forms:', activeFormsCount, 'Max:', maxForms);
+            return;
+        }
+        
         const emptyForm = document.querySelector('#empty-image-form');
-        if (!emptyForm) return;
+        if (!emptyForm) {
+            console.log('Empty form template not found');
+            return;
+        }
         
         const newForm = emptyForm.cloneNode(true);
         newForm.id = '';
         newForm.style.display = 'block';
         newForm.classList.add('image-upload-item');
+        
+        // Calculate the next form index based on current forms
+        const currentForms = imageFormsContainer.querySelectorAll('.image-upload-item');
+        const formIndex = currentForms.length;
+        
+        console.log('Creating form with index:', formIndex, 'Current forms:', currentForms.length);
         
         // Update form indices
         newForm.querySelectorAll('input, select, textarea').forEach(input => {
@@ -76,9 +110,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         imageFormsContainer.appendChild(newForm);
-        formIndex++;
-        totalFormsInput.value = formIndex;
+        updateFormIndices(); // This will update totalFormsInput.value correctly
         updateAddButtonVisibility();
+        
+        console.log('Form created. Total forms now:', imageFormsContainer.querySelectorAll('.image-upload-item').length);
     }
     
     // Add event listener to add button
@@ -101,6 +136,60 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial setup
     updateAddButtonVisibility();
+    
+    // Add initial empty form if no forms exist (for new builds)
+    const existingActiveForms = countActiveForms();
+    if (existingActiveForms === 0) {
+        createNewImageForm();
+    }
+    
+    // Function to handle primary image selection
+    function handlePrimaryImageSelection() {
+        const primaryCheckboxes = document.querySelectorAll('input[name*="is_primary"]');
+        
+        primaryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // Uncheck all other primary checkboxes
+                    primaryCheckboxes.forEach(otherCheckbox => {
+                        if (otherCheckbox !== this) {
+                            otherCheckbox.checked = false;
+                        }
+                    });
+                    
+                    // Add visual indicator
+                    updatePrimaryImageIndicators();
+                }
+            });
+        });
+    }
+    
+    // Function to update visual indicators for primary image
+    function updatePrimaryImageIndicators() {
+        const imageItems = document.querySelectorAll('.image-upload-item');
+        
+        imageItems.forEach(item => {
+            const primaryCheckbox = item.querySelector('input[name*="is_primary"]');
+            const isPrimary = primaryCheckbox && primaryCheckbox.checked;
+            
+            // Add/remove primary indicator class
+            if (isPrimary) {
+                item.classList.add('primary-image');
+            } else {
+                item.classList.remove('primary-image');
+            }
+        });
+    }
+    
+    // Initialize primary image handling
+    handlePrimaryImageSelection();
+    
+    // Re-initialize primary image handling when new forms are added
+    const originalCreateNewImageForm = createNewImageForm;
+    createNewImageForm = function() {
+        originalCreateNewImageForm();
+        handlePrimaryImageSelection();
+    };
     
     // Handle file input changes to show preview
     function handleFilePreview(input) {
@@ -128,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle multiple file selection (HTML5 multiple attribute)
     function handleMultipleFiles(input) {
         const files = Array.from(input.files);
-        const maxFiles = maxForms - imageFormsContainer.querySelectorAll('.image-upload-item').length;
+        const maxFiles = maxForms - countActiveForms();
         
         files.slice(0, maxFiles).forEach((file, index) => {
             if (index === 0) {
@@ -166,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.classList.remove('drag-over');
         
         const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-        const availableSlots = maxForms - this.querySelectorAll('.image-upload-item').length;
+        const availableSlots = maxForms - countActiveForms();
         
         files.slice(0, availableSlots).forEach(file => {
             createNewImageForm();

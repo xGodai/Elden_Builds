@@ -886,3 +886,62 @@ a:focus {
     border-color: var(--border-focus) !important;
     box-shadow: 0 0 0 0.2rem rgba(184, 134, 11, 0.25) !important;
 }
+
+/* Primary image indicator styles */
+.image-upload-item.primary-image {
+    border: 2px solid var(--accent-primary) !important;
+    background-color: rgba(184, 134, 11, 0.1) !important;
+    position: relative;
+}
+
+.image-upload-item.primary-image::before {
+    content: "⭐ PRIMARY";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 10;
+}
+
+/* Primary badge for new system */
+.primary-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.preview-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Primary checkbox styling */
+.image-upload-item input[name*="is_primary"] {
+    accent-color: var(--accent-primary);
+}
+
+/* Max images indicator */
+.image-forms-container[data-max-reached="true"] {
+    opacity: 0.7;
+}
+
+.image-forms-container[data-max-reached="true"]::after {
+    content: "Maximum 3 images allowed";
+    display: block;
+    color: var(--accent-danger);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}

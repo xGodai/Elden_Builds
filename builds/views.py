@@ -149,18 +149,41 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
             form.instance.user = self.request.user
             self.object = form.save()
 
-            # Handle images if any were uploaded
+            # Handle multiple image uploads
+            self.handle_image_uploads()
+
+            # Always succeed if the main form is valid - images are optional
+            messages.success(self.request, 'Build created successfully!')
+            return super().form_valid(form)
+
+    def handle_image_uploads(self):
+        """Handle multiple image uploads from the simplified interface"""
+        # Check for multiple file uploads in the first form
+        first_form_files = self.request.FILES.getlist('images-0-image')
+        
+        if first_form_files:
+            # Handle multiple files uploaded at once
+            for i, uploaded_file in enumerate(first_form_files[:3]):  # Limit to 3
+                image = BuildImage.objects.create(
+                    build=self.object,
+                    image=uploaded_file,
+                    is_primary=(i == 0)  # First image is primary
+                )
+        else:
+            # Handle traditional formset submission
             context = self.get_context_data()
             image_formset = context['image_formset']
 
             # Only process images if formset is valid
             if image_formset.is_valid():
                 image_formset.instance = self.object
-                image_formset.save()
+                saved_images = image_formset.save()
 
-                # If no primary image is set, make the first one primary
-                if (self.object.images.exists() and not
-                        self.object.images.filter(is_primary=True).exists()):
+                # Ensure first image is primary
+                if saved_images and self.object.images.exists():
+                    # Reset all primary flags
+                    self.object.images.update(is_primary=False)
+                    # Set first image as primary
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
@@ -171,10 +194,6 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
                     'Build created but some images had errors. '
                     'Please edit to fix image issues.'
                 )
-
-            # Always succeed if the main form is valid - images are optional
-            messages.success(self.request, 'Build created successfully!')
-            return super().form_valid(form)
 
     def form_invalid(self, form):
         # Add image formset errors to context
@@ -209,31 +228,52 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             form.instance.user = self.request.user
             self.object = form.save()
 
-            # Handle images if any were uploaded
-            context = self.get_context_data()
-            image_formset = context['image_formset']
-
-            # Only process images if formset is valid
-            if image_formset.is_valid():
-                image_formset.save()
-
-                # Ensure at least one primary image if images exist
-                if (self.object.images.exists() and not
-                        self.object.images.filter(is_primary=True).exists()):
-                    first_image = self.object.images.first()
-                    first_image.is_primary = True
-                    first_image.save()
-            else:
-                # If formset is invalid, show errors but don't fail
-                messages.warning(
-                    self.request,
-                    'Build updated but some images had errors. '
-                    'Please check image uploads.'
-                )
+            # Handle image uploads (including new multiple uploads)
+            self.handle_image_updates()
 
             # Always succeed if the main form is valid - images are optional
             messages.success(self.request, 'Build updated successfully!')
             return super().form_valid(form)
+
+    def handle_image_updates(self):
+        """Handle image updates including multiple new uploads"""
+        # Check for new multiple file uploads
+        first_form_files = self.request.FILES.getlist('images-0-image')
+        
+        if first_form_files:
+            # When user uploads new images, clear all existing images first
+            self.object.images.all().delete()
+            
+            # Add new images
+            for i, uploaded_file in enumerate(first_form_files[:3]):  # Limit to 3
+                image = BuildImage.objects.create(
+                    build=self.object,
+                    image=uploaded_file,
+                    is_primary=(i == 0)  # First image is primary
+                )
+        
+        # Always handle traditional formset submission for deletions (when no new files)
+        if not first_form_files:
+            context = self.get_context_data()
+            image_formset = context['image_formset']
+
+            if image_formset.is_valid():
+                image_formset.save()
+
+                # Ensure first remaining image is primary after deletions
+                if self.object.images.exists():
+                    if not self.object.images.filter(is_primary=True).exists():
+                        first_image = self.object.images.first()
+                        first_image.is_primary = True
+                        first_image.save()
+            else:
+                # If formset is invalid, show errors
+                for form in image_formset:
+                    if form.errors:
+                        messages.warning(
+                            self.request,
+                            f'Image form errors: {form.errors}'
+                        )
 
     def form_invalid(self, form):
         # Add image formset errors to context  
