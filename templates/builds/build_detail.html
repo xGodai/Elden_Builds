@@ -212,7 +212,7 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <span><strong>⚡ Grace:</strong></span>
-            <span class="badge bg-warning text-dark">{{ object.total_likes }}</span>
+            <span class="badge bg-warning text-dark" data-grace-count>{{ object.total_likes }}</span>
           </div>
           <div class="d-flex justify-content-between align-items-center mb-3">
             <span><strong>💬 Comments:</strong></span>
@@ -246,21 +246,23 @@
             </div>
           </div>
           
-          <!-- Like Button -->
+          <!-- Grace Button -->
           {% if user.is_authenticated %}
-            <form action="{% url 'build-like' object.pk %}" method="post" class="d-grid">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.get_full_path }}">
-              {% if user in object.liked_by.all %}
-                <button type="submit" class="btn btn-warning">
-                  ⚡ Remove Grace
-                </button>
-              {% else %}
-                <button type="submit" class="btn btn-outline-warning">
-                  ⚡ Grace Build
-                </button>
-              {% endif %}
-            </form>
+            <div class="d-grid">
+              <button type="button" 
+                      class="btn grace-btn {% if user in object.liked_by.all %}btn-warning{% else %}btn-outline-warning{% endif %}"
+                      data-build-id="{{ object.pk }}"
+                      data-liked="{% if user in object.liked_by.all %}true{% else %}false{% endif %}"
+                      data-like-url="{% url 'build-like' object.pk %}">
+                <span class="grace-text">
+                  {% if user in object.liked_by.all %}
+                    ⚡ Remove Grace
+                  {% else %}
+                    ⚡ Grace Build
+                  {% endif %}
+                </span>
+              </button>
+            </div>
           {% else %}
             <div class="text-center">
               <p class="text-muted mb-2">Want to grace this build?</p>
@@ -404,68 +406,9 @@
       <p class="text-muted">No comments yet. Be the first to comment!</p>
     {% endif %}
   </div>
+{% endblock %}
 
-  <!-- JavaScript for AJAX voting and comment sorting -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Voting functionality
-      const voteForms = document.querySelectorAll('.vote-form');
-      
-      voteForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          const commentId = this.dataset.commentId;
-          const voteType = this.dataset.voteType;
-          const formData = new FormData(this);
-          
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              // Update vote counts
-              const comment = document.querySelector(`[data-comment-id="${commentId}"]`).closest('.comment');
-              const upvoteCount = comment.querySelector('.upvote-count');
-              const downvoteCount = comment.querySelector('.downvote-count');
-              const scoreValue = comment.querySelector('.score-value');
-              const upvoteBtn = comment.querySelector('.upvote-btn');
-              const downvoteBtn = comment.querySelector('.downvote-btn');
-              
-              upvoteCount.textContent = data.upvotes;
-              downvoteCount.textContent = data.downvotes;
-              scoreValue.textContent = data.score;
-              
-              // Update button styles based on user vote
-              upvoteBtn.className = 'btn btn-sm upvote-btn ' + 
-                (data.user_vote === 'upvote' ? 'btn-success' : 'btn-outline-success');
-              downvoteBtn.className = 'btn btn-sm downvote-btn ' + 
-                (data.user_vote === 'downvote' ? 'btn-danger' : 'btn-outline-danger');
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-        });
-      });
-
-      // Comment sorting functionality
-      const sortSelect = document.getElementById('comment-sort-select');
-      if (sortSelect) {
-        sortSelect.addEventListener('change', function() {
-          const currentUrl = new URL(window.location);
-          currentUrl.searchParams.set('comment_sort', this.value);
-          window.location.href = currentUrl.toString();
-        });
-      }
-    });
-  </script>
-</div>
+{% block extra_js %}
+<script src="{% static 'js/build-detail.js' %}"></script>
 {% endblock %}
 
