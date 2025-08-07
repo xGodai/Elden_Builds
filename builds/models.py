@@ -59,6 +59,7 @@ class Build(models.Model):
         default='PVE')
     liked_by = models.ManyToManyField(
         User, related_name='liked_builds', blank=True)
+    views = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def total_likes(self):

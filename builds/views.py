@@ -82,6 +82,19 @@ class BuildDetailView(DetailView):
     model = Build
     template_name = 'builds/build_detail.html'
 
+    def get_object(self, queryset=None):
+        """Override to increment view count"""
+        obj = super().get_object(queryset=queryset)
+        
+        # Increment view count
+        # Use F() to avoid race conditions
+        from django.db.models import F
+        Build.objects.filter(pk=obj.pk).update(views=F('views') + 1)
+        
+        # Refresh the object to get updated view count
+        obj.refresh_from_db()
+        return obj
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
