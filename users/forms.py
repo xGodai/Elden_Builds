@@ -86,6 +86,11 @@ class UserProfileUpdateForm(forms.ModelForm):
             'class': 'form-control',
             'accept': 'image/*'
         })
+        # Remove the default "Clear" checkbox for profile picture
+        self.fields['profile_picture'].widget = forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        })
         self.fields['location'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'Your location'

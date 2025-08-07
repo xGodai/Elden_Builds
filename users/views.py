@@ -38,6 +38,12 @@ def profile_edit(request):
             request.POST, request.FILES, instance=user_profile)
 
         if user_form.is_valid() and profile_form.is_valid():
+            # Handle profile picture removal
+            if request.POST.get('remove_profile_picture'):
+                if user_profile.profile_picture:
+                    user_profile.profile_picture.delete(save=False)
+                    user_profile.profile_picture = None
+            
             user_form.save()
             profile_form.save()
             messages.success(

@@ -61,28 +61,62 @@
               {% endif %}
             </div>
 
-            <div class="mb-3">
-              <label for="{{ profile_form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
-              <div class="mb-2">
-                {% if user.profile.profile_picture %}
-                  <img src="{{ user.profile.profile_picture.url }}" 
-                       alt="Current Profile Picture" 
-                       class="rounded-circle"
-                       style="width: 60px; height: 60px; object-fit: cover;">
-                  <span class="ms-2 text-muted">Current picture</span>
-                {% else %}
-                  <img src="{{ user.profile.get_profile_picture_url }}" 
-                       alt="Default Profile Picture" 
-                       class="rounded-circle"
-                       style="width: 60px; height: 60px; object-fit: cover;">
-                  <span class="ms-2 text-muted">Default picture</span>
+            <!-- Profile Picture Section -->
+            <div class="mb-4">
+              <h5 class="fw-bold mb-3">
+                📸 Profile Picture
+                <small class="text-muted">(Max 10MB)</small>
+              </h5>
+              
+              <div class="image-upload-section">
+                <!-- Current Profile Picture (if exists) -->
+                {% if user.userprofile.profile_picture %}
+                  <div class="mb-3 p-3" style="background-color: #2d2d2d; border: 1px solid #444; border-radius: 8px;">
+                    <div class="row align-items-center">
+                      <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                          <img src="{{ user.userprofile.profile_picture.url }}" alt="Current profile picture" 
+                               style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin-right: 15px;">
+                          <div>
+                            <span class="badge" style="background-color: #ffd700; color: #000; margin-bottom: 8px;">⭐ PRIMARY</span>
+                            <div>
+                              <input type="file" class="form-control" style="display: none;" disabled>
+                              <small class="text-muted d-block">Current profile picture</small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-4 text-end">
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="remove-profile-picture" name="remove_profile_picture" value="1">
+                          <label class="form-check-label text-danger" for="remove-profile-picture">
+                            🗑️ Delete Image
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 {% endif %}
+                
+                <!-- Upload New Profile Picture -->
+                <div class="simple-upload mb-3">
+                  <label for="{{ profile_form.profile_picture.id_for_label }}" class="form-label fw-bold">
+                    � {% if user.userprofile.profile_picture %}Change Profile Picture{% else %}Upload Profile Picture{% endif %}
+                  </label>
+                  {{ profile_form.profile_picture }}
+                  <small class="form-text text-muted">
+                    {% if user.userprofile.profile_picture %}
+                      Upload a new image to replace your current profile picture.
+                    {% else %}
+                      Upload your first profile picture (optional). Max 10MB.
+                    {% endif %}
+                  </small>
+                  {% if profile_form.profile_picture.errors %}
+                    <div class="text-danger mt-1">{{ profile_form.profile_picture.errors }}</div>
+                  {% endif %}
+                </div>
               </div>
-              {{ profile_form.profile_picture }}
-              <div class="form-text">Upload a new profile picture (optional)</div>
-              {% if profile_form.profile_picture.errors %}
-                <div class="text-danger">{{ profile_form.profile_picture.errors }}</div>
-              {% endif %}
             </div>
 
             <div class="row">
@@ -154,9 +188,9 @@
 
             <hr>
 
-            <div class="d-flex justify-content-between">
-              <a href="{% url 'user-profile' user.username %}" class="btn btn-secondary">Cancel</a>
-              <button type="submit" class="btn btn-primary">Save Changes</button>
+            <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+              <a href="{% url 'user-profile' user.username %}" class="btn btn-secondary order-2 order-sm-1">Cancel</a>
+              <button type="submit" class="btn btn-primary order-1 order-sm-2">Save Changes</button>
             </div>
           </form>
         </div>

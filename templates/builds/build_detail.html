@@ -12,7 +12,7 @@
           <span class="badge bg-primary mb-2">{{ object.get_category_display }}</span>
         </div>
         {% if user == object.user %}
-          <div class="d-flex gap-2">
+          <div class="d-flex flex-column flex-sm-row gap-2">
             <a href="{% url 'build-update' object.pk %}" class="btn btn-warning btn-sm">Edit</a>
             <a href="{% url 'build-delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>
           </div>
@@ -294,7 +294,7 @@
   </div>
 
   {% if user == object.user %}
-    <div class="mt-3">
+    <div class="mt-3 d-flex flex-column flex-sm-row gap-2">
       <a href="{% url 'build-update' object.pk %}" class="btn btn-warning">Edit</a>
       <a href="{% url 'build-delete' object.pk %}" class="btn btn-danger">Delete</a>
     </div>
