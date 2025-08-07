@@ -106,12 +106,10 @@
                 {% for build in user_builds %}
                   <div class="col-12 col-sm-6 col-lg-4">
                     <div class="card h-100 shadow-sm">
-                      {% if build.get_primary_image %}
-                        <img src="{{ build.get_primary_image.get_image_url }}" 
-                             class="card-img-top" 
-                             alt="{{ build.title }}" 
-                             style="height: 200px; object-fit: cover;">
-                      {% endif %}
+                      <img src="{{ build.get_image_url }}" 
+                           class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}" 
+                           alt="{{ build.title }}" 
+                           style="height: 180px;">
                       
                       <div class="card-body d-flex flex-column">
                         <h3 class="card-title h5">
@@ -169,9 +167,10 @@
                 {% for build in liked_builds %}
                   <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100">
-                      {% if build.image %}
-                        <img src="{{ build.image.url }}" class="card-img-top" alt="{{ build.title }}" style="height: 200px; object-fit: cover;">
-                      {% endif %}
+                      <img src="{{ build.get_image_url }}" 
+                           class="card-img-top{% if not build.has_custom_image %} default-emblem{% endif %}" 
+                           alt="{{ build.title }}" 
+                           style="height: 180px;">
                       
                       <div class="card-body d-flex flex-column">
                         <h3 class="card-title h5">
