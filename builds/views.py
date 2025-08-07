@@ -1,6 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
+from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView, DeleteView, View
+)
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.db import transaction
@@ -15,9 +17,9 @@ from users.notifications import NotificationService
 
 class BuildListView(ListView):
     model = Build
-    template_name = 'builds/build_list.html'  
+    template_name = 'builds/build_list.html'
     context_object_name = 'builds'
-    
+
     def get_queryset(self):
         queryset = Build.objects.all()
         category = self.request.GET.get('category')
@@ -39,14 +41,18 @@ class BuildListView(ListView):
         # Apply category filter
         if category:
             queryset = queryset.filter(category=category)
-            
+
         # Apply sorting
         if sort == 'popular':
-            queryset = queryset.annotate(like_count=Count('liked_by')).order_by('-like_count', '-created_at')
+            queryset = queryset.annotate(
+                like_count=Count('liked_by')
+            ).order_by('-like_count', '-created_at')
         elif sort == 'oldest':
             queryset = queryset.order_by('created_at')
         elif sort == 'most_commented':
-            queryset = queryset.annotate(comment_count=Count('comments')).order_by('-comment_count', '-created_at')
+            queryset = queryset.annotate(
+                comment_count=Count('comments')
+            ).order_by('-comment_count', '-created_at')
         elif sort == 'alphabetical':
             queryset = queryset.order_by('title')
         else:  # newest (default)
@@ -59,7 +65,7 @@ class BuildListView(ListView):
         context['current_sort'] = self.request.GET.get('sort', 'newest')
         context['current_category'] = self.request.GET.get('category', '')
         context['current_search'] = self.request.GET.get('search', '')
-        
+
         # Add user_has_liked information for authenticated users
         if self.request.user.is_authenticated:
             builds = context['builds']
@@ -68,27 +74,32 @@ class BuildListView(ListView):
             )
             for build in builds:
                 build.user_has_liked = build.id in user_liked_builds
-        
+
         return context
+
 
 class BuildDetailView(DetailView):
     model = Build
-    template_name = 'builds/build_detail.html'  # <app>/<model>_detail.html
+    template_name = 'builds/build_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Get sort parameter
         sort = self.request.GET.get('comment_sort', 'newest')
-        
+
         # Get comments with different sorting options
         comments = self.object.comments.all()
-        
+
         if sort == 'popular':
             # Sort by vote score (upvotes - downvotes)
             comments = comments.annotate(
-                upvote_count=Count('votes', filter=Q(votes__vote_type='upvote')),
-                downvote_count=Count('votes', filter=Q(votes__vote_type='downvote'))
+                upvote_count=Count(
+                    'votes', filter=Q(votes__vote_type='upvote')
+                ),
+                downvote_count=Count(
+                    'votes', filter=Q(votes__vote_type='downvote')
+                )
             ).annotate(
                 vote_score=F('upvote_count') - F('downvote_count')
             ).order_by('-vote_score', '-created_at')
@@ -96,16 +107,19 @@ class BuildDetailView(DetailView):
             comments = comments.order_by('created_at')
         else:  # newest (default)
             comments = comments.order_by('-created_at')
-        
+
         # Add user vote information to each comment
         if self.request.user.is_authenticated:
             for comment in comments:
-                comment.current_user_vote = comment.user_vote(self.request.user)
-        
+                comment.current_user_vote = comment.user_vote(
+                    self.request.user
+                )
+
         context['comments'] = comments
         context['comment_form'] = CommentForm()
         context['current_sort'] = sort
         return context
+
 
 class BuildCreateView(LoginRequiredMixin, CreateView):
     model = Build
@@ -118,9 +132,9 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
         if self.request.POST:
             # Create formset with POST data
             data['image_formset'] = BuildImageFormSet(
-                self.request.POST, 
-                self.request.FILES, 
-                queryset=BuildImage.objects.none()  # Use empty queryset for new builds
+                self.request.POST,
+                self.request.FILES,
+                queryset=BuildImage.objects.none()
             )
         else:
             # Create empty formset for GET requests
@@ -134,28 +148,30 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
         with transaction.atomic():
             form.instance.user = self.request.user
             self.object = form.save()
-            
+
             # Handle images if any were uploaded
             context = self.get_context_data()
             image_formset = context['image_formset']
-            
+
             # Only process images if formset is valid or if it's just empty
             if image_formset.is_valid():
                 image_formset.instance = self.object
                 image_formset.save()
-                
+
                 # If no primary image is set, make the first one primary
-                if self.object.images.exists() and not self.object.images.filter(is_primary=True).exists():
+                if (self.object.images.exists() and not
+                        self.object.images.filter(is_primary=True).exists()):
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
-            
+
             # Always succeed if the main form is valid - images are optional
             messages.success(self.request, 'Build created successfully!')
             return super().form_valid(form)
 
     def form_invalid(self, form):
         return super().form_invalid(form)
+
 
 class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Build
@@ -165,7 +181,9 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         if self.request.POST:
-            data['image_formset'] = BuildImageFormSet(self.request.POST, self.request.FILES, instance=self.object)
+            data['image_formset'] = BuildImageFormSet(
+                self.request.POST, self.request.FILES, instance=self.object
+            )
         else:
             data['image_formset'] = BuildImageFormSet(instance=self.object)
         return data
@@ -175,21 +193,22 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         with transaction.atomic():
             form.instance.user = self.request.user
             self.object = form.save()
-            
+
             # Handle images if any were uploaded
             context = self.get_context_data()
             image_formset = context['image_formset']
-            
+
             # Only process images if formset is valid
             if image_formset.is_valid():
                 image_formset.save()
-                
+
                 # Ensure at least one primary image if images exist
-                if self.object.images.exists() and not self.object.images.filter(is_primary=True).exists():
+                if (self.object.images.exists() and not
+                        self.object.images.filter(is_primary=True).exists()):
                     first_image = self.object.images.first()
                     first_image.is_primary = True
                     first_image.save()
-            
+
             # Always succeed if the main form is valid - images are optional
             messages.success(self.request, 'Build updated successfully!')
             return super().form_valid(form)
@@ -197,6 +216,7 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         build = self.get_object()
         return self.request.user == build.user
+
 
 class BuildDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Build
@@ -211,10 +231,10 @@ class BuildDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 class BuildLikeView(LoginRequiredMixin, View):
     def post(self, request, pk):
         build = get_object_or_404(Build, pk=pk)
-        
+
         # Check if user is already liked the build
         is_liked = request.user in build.liked_by.all()
-        
+
         if is_liked:
             build.liked_by.remove(request.user)
             action = 'unliked'
@@ -222,8 +242,10 @@ class BuildLikeView(LoginRequiredMixin, View):
             build.liked_by.add(request.user)
             action = 'liked'
             # Create notification for build like
-            NotificationService.create_build_like_notification(build, request.user)
-        
+            NotificationService.create_build_like_notification(
+                build, request.user
+            )
+
         # Return JSON response for AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
@@ -232,10 +254,11 @@ class BuildLikeView(LoginRequiredMixin, View):
                 'total_likes': build.total_likes(),
                 'is_liked': not is_liked
             })
-        
+
         # Redirect for non-AJAX requests
-        # Try to redirect back to the referring page, otherwise go to build detail
-        next_url = request.POST.get('next') or request.META.get('HTTP_REFERER')
+        # Try to redirect back to the referring page, otherwise go to build
+        next_url = (request.POST.get('next') or
+                    request.META.get('HTTP_REFERER'))
         if next_url:
             return redirect(next_url)
         return redirect('build-detail', pk=pk)
@@ -245,20 +268,27 @@ class CommentCreateView(LoginRequiredMixin, View):
     def post(self, request, pk):
         build = get_object_or_404(Build, pk=pk)
         form = CommentForm(request.POST)
-        
+
         if form.is_valid():
             comment = form.save(commit=False)
             comment.build = build
             comment.user = request.user
             comment.save()
-            
+
             # Create notification for build comment
-            NotificationService.create_build_comment_notification(build, request.user, comment)
-            
-            messages.success(request, 'Your comment has been added successfully!')
+            NotificationService.create_build_comment_notification(
+                build, request.user, comment
+            )
+
+            messages.success(
+                request, 'Your comment has been added successfully!'
+            )
         else:
-            messages.error(request, 'There was an error with your comment. Please try again.')
-        
+            messages.error(
+                request,
+                'There was an error with your comment. Please try again.'
+            )
+
         return redirect('build-detail', pk=pk)
 
 
@@ -272,7 +302,9 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == comment.user
 
     def form_valid(self, form):
-        messages.success(self.request, 'Your comment has been updated successfully!')
+        messages.success(
+            self.request, 'Your comment has been updated successfully!'
+        )
         return super().form_valid(form)
 
 
@@ -285,21 +317,27 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == comment.user
 
     def get_success_url(self):
-        messages.success(self.request, 'Your comment has been deleted successfully!')
-        return reverse_lazy('build-detail', kwargs={'pk': self.object.build.pk})
+        messages.success(
+            self.request, 'Your comment has been deleted successfully!'
+        )
+        return reverse_lazy(
+            'build-detail', kwargs={'pk': self.object.build.pk}
+        )
 
 
 class CommentVoteView(LoginRequiredMixin, View):
     def post(self, request, pk, vote_type):
         comment = get_object_or_404(Comment, pk=pk)
-        
+
         # Validate vote_type
         if vote_type not in ['upvote', 'downvote']:
             return JsonResponse({'error': 'Invalid vote type'}, status=400)
-        
+
         # Check if user already voted
         try:
-            existing_vote = CommentVote.objects.get(comment=comment, user=request.user)
+            existing_vote = CommentVote.objects.get(
+                comment=comment, user=request.user
+            )
             if existing_vote.vote_type == vote_type:
                 # Remove vote if clicking the same vote type
                 existing_vote.delete()
@@ -310,7 +348,9 @@ class CommentVoteView(LoginRequiredMixin, View):
                 existing_vote.save()
                 action = 'changed'
                 # Create notification for vote change
-                NotificationService.create_comment_vote_notification(comment, request.user, vote_type)
+                NotificationService.create_comment_vote_notification(
+                    comment, request.user, vote_type
+                )
         except CommentVote.DoesNotExist:
             # Create new vote
             CommentVote.objects.create(
@@ -320,8 +360,10 @@ class CommentVoteView(LoginRequiredMixin, View):
             )
             action = 'added'
             # Create notification for new vote
-            NotificationService.create_comment_vote_notification(comment, request.user, vote_type)
-        
+            NotificationService.create_comment_vote_notification(
+                comment, request.user, vote_type
+            )
+
         # Return JSON response for AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
@@ -332,6 +374,6 @@ class CommentVoteView(LoginRequiredMixin, View):
                 'score': comment.vote_score(),
                 'user_vote': comment.user_vote(request.user)
             })
-        
+
         # Redirect for non-AJAX requests
         return redirect('build-detail', pk=comment.build.pk)

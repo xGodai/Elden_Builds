@@ -9,12 +9,11 @@ class UserRegistrationForm(UserCreationForm):
     username = forms.CharField(
         max_length=25,
         help_text='Username must be 25 characters or fewer. Letters, digits and @/./+/-/_ only.',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Choose a username',
-            'maxlength': '25'
-        })
-    )
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Choose a username',
+                'maxlength': '25'}))
 
     class Meta:
         model = User
@@ -52,7 +51,8 @@ class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['first_name'].widget.attrs.update({'class': 'form-control'})
+        self.fields['first_name'].widget.attrs.update(
+            {'class': 'form-control'})
         self.fields['last_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
 
@@ -61,9 +61,15 @@ class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = [
-            'display_name', 'bio', 'profile_picture', 'location', 'favorite_weapon',
-            'notify_on_build_like', 'notify_on_build_comment', 'notify_on_comment_reply', 'notify_on_comment_vote'
-        ]
+            'display_name',
+            'bio',
+            'profile_picture',
+            'location',
+            'favorite_weapon',
+            'notify_on_build_like',
+            'notify_on_build_comment',
+            'notify_on_comment_reply',
+            'notify_on_comment_vote']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,9 +94,13 @@ class UserProfileUpdateForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Your favorite Elden Ring weapon'
         })
-        
+
         # Notification preferences styling
-        self.fields['notify_on_build_like'].widget.attrs.update({'class': 'form-check-input'})
-        self.fields['notify_on_build_comment'].widget.attrs.update({'class': 'form-check-input'})
-        self.fields['notify_on_comment_reply'].widget.attrs.update({'class': 'form-check-input'})
-        self.fields['notify_on_comment_vote'].widget.attrs.update({'class': 'form-check-input'})
+        self.fields['notify_on_build_like'].widget.attrs.update(
+            {'class': 'form-check-input'})
+        self.fields['notify_on_build_comment'].widget.attrs.update(
+            {'class': 'form-check-input'})
+        self.fields['notify_on_comment_reply'].widget.attrs.update(
+            {'class': 'form-check-input'})
+        self.fields['notify_on_comment_vote'].widget.attrs.update(
+            {'class': 'form-check-input'})

@@ -3,16 +3,18 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from cloudinary.models import CloudinaryField
-import cloudinary.uploader
 
 # Create your models here.
+
 
 def validate_image_size(value):
     """Validate that the uploaded image doesn't exceed 10MB"""
     if value and hasattr(value, 'size'):
         if value.size > 10 * 1024 * 1024:  # 10MB in bytes
-            raise ValidationError('Image file too large. Maximum size is 10MB.')
+            raise ValidationError(
+                'Image file too large. Maximum size is 10MB.')
     return value
+
 
 class Build(models.Model):
 
@@ -29,87 +31,108 @@ class Build(models.Model):
     armor = models.CharField(max_length=100)
     talismans = models.CharField(max_length=100)
     spells = models.CharField(max_length=100, blank=True, null=True)
-    
+
     # Player Stats
-    level = models.PositiveIntegerField(blank=True, null=True, help_text="Character level")
-    vigor = models.PositiveIntegerField(blank=True, null=True, help_text="Vigor stat")
-    mind = models.PositiveIntegerField(blank=True, null=True, help_text="Mind stat")
-    endurance = models.PositiveIntegerField(blank=True, null=True, help_text="Endurance stat")
-    strength = models.PositiveIntegerField(blank=True, null=True, help_text="Strength stat")
-    dexterity = models.PositiveIntegerField(blank=True, null=True, help_text="Dexterity stat")
-    intelligence = models.PositiveIntegerField(blank=True, null=True, help_text="Intelligence stat")
-    faith = models.PositiveIntegerField(blank=True, null=True, help_text="Faith stat")
-    arcane = models.PositiveIntegerField(blank=True, null=True, help_text="Arcane stat")
-    
+    level = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Character level")
+    vigor = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Vigor stat")
+    mind = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Mind stat")
+    endurance = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Endurance stat")
+    strength = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Strength stat")
+    dexterity = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Dexterity stat")
+    intelligence = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Intelligence stat")
+    faith = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Faith stat")
+    arcane = models.PositiveIntegerField(
+        blank=True, null=True, help_text="Arcane stat")
+
     # Remove single image field - we'll use BuildImage model instead
-    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='PVE')
-    liked_by = models.ManyToManyField(User, related_name='liked_builds', blank=True)
+    category = models.CharField(
+        max_length=10,
+        choices=CATEGORY_CHOICES,
+        default='PVE')
+    liked_by = models.ManyToManyField(
+        User, related_name='liked_builds', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def total_likes(self):
         return self.liked_by.count()
-    
+
     def get_primary_image(self):
         """Get the primary (first) image for this build"""
         primary_image = self.images.filter(is_primary=True).first()
         if not primary_image:
             primary_image = self.images.first()
         return primary_image
-    
+
     def get_image_url(self, size='medium'):
         """Return optimized build image URL or default image"""
         primary_image = self.get_primary_image()
         if primary_image:
-            from utils.cloudinary_utils import get_build_image_url, get_thumbnail_url, BUILD_SIZES
+            from utils.cloudinary_utils import (
+                get_build_image_url, get_thumbnail_url, BUILD_SIZES
+            )
             if size == 'thumbnail':
                 return get_thumbnail_url(primary_image.image)
             else:
                 size_config = BUILD_SIZES.get(size, BUILD_SIZES['medium'])
-                return get_build_image_url(primary_image.image, size_config['width'], size_config['height'])
-        
+                return get_build_image_url(
+                    primary_image.image,
+                    size_config['width'],
+                    size_config['height'])
+
         # Return default emblem image based on build category
         return self.get_default_image_url()
-    
+
     def get_default_image_url(self):
         """Return a default emblem image based on build category"""
         from django.templatetags.static import static
-        import random
-        
+
         # Map categories to specific emblems
         category_emblems = {
-            'PVE': ['s60110_a.png', 's60120_a.png', 's60140_a.png', 's60160_a.png'],  # Adventure/PvE themed
-            'PVP': ['s60200_a.png', 's60210_a.png', 's60230_a.png', 's60270_a.png'],  # Combat/PvP themed  
-            'BOTH': ['s60130_a.png', 's60150_a.png', 's60170_a.png', 's60240_a.png'], # Balanced themed
+            # Adventure/PvE themed
+            'PVE': ['s60110_a.png', 's60120_a.png', 's60140_a.png', 's60160_a.png'],
+            # Combat/PvP themed
+            'PVP': ['s60200_a.png', 's60210_a.png', 's60230_a.png', 's60270_a.png'],
+            # Balanced themed
+            'BOTH': ['s60130_a.png', 's60150_a.png', 's60170_a.png', 's60240_a.png'],
         }
-        
-        # Get emblems for current category, fallback to PVE if category not found
+
+        # Get emblems for current category, fallback to PVE if category not
+        # found
         emblems = category_emblems.get(self.category, category_emblems['PVE'])
-        
+
         # Use build ID to consistently select the same emblem for the same build
         # This ensures the same build always shows the same default image
         emblem_index = self.pk % len(emblems)
         selected_emblem = emblems[emblem_index]
-        
+
         return static(f'images/EMBLEMS/{selected_emblem}')
-    
+
     def has_custom_image(self):
         """Check if build has any uploaded images"""
         return self.images.exists()
-    
+
     def can_add_image(self):
         """Check if build can have more images (max 3)"""
         return self.images.count() < 3
-    
+
     def get_total_stats(self):
         """Calculate total stat points allocated (excluding level)"""
-        stats = [self.vigor, self.mind, self.endurance, self.strength, 
-                self.dexterity, self.intelligence, self.faith, self.arcane]
+        stats = [self.vigor, self.mind, self.endurance, self.strength,
+                 self.dexterity, self.intelligence, self.faith, self.arcane]
         return sum(stat for stat in stats if stat is not None)
-    
+
     def has_stats(self):
         """Check if any stats are filled in"""
-        return any([self.level, self.vigor, self.mind, self.endurance, 
-                   self.strength, self.dexterity, self.intelligence, 
+        return any([self.level, self.vigor, self.mind, self.endurance,
+                   self.strength, self.dexterity, self.intelligence,
                    self.faith, self.arcane])
 
     def get_absolute_url(self):
@@ -118,9 +141,12 @@ class Build(models.Model):
 
 class BuildImage(models.Model):
     """Model for storing multiple images per build (max 3)"""
-    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='images')
+    build = models.ForeignKey(
+        Build,
+        on_delete=models.CASCADE,
+        related_name='images')
     image = CloudinaryField(
-        'image', 
+        'image',
         folder='build_images/',
         validators=[validate_image_size],
         transformation={
@@ -142,15 +168,18 @@ class BuildImage(models.Model):
         # Validate max 3 images per build
         if not self.pk and self.build.images.count() >= 3:
             raise ValidationError('Maximum 3 images allowed per build.')
-        
+
         # If this is the first image for the build, make it primary
         if not self.pk and not self.build.images.exists():
             self.is_primary = True
-        
+
         # If setting as primary, remove primary status from other images
         if self.is_primary:
-            BuildImage.objects.filter(build=self.build, is_primary=True).update(is_primary=False)
-        
+            BuildImage.objects.filter(
+                build=self.build,
+                is_primary=True).update(
+                is_primary=False)
+
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -163,11 +192,16 @@ class BuildImage(models.Model):
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return f"Image for {self.build.title} {'(Primary)' if self.is_primary else ''}"
+        return f"Image for {
+            self.build.title} {
+            '(Primary)' if self.is_primary else ''}"
 
 
 class Comment(models.Model):
-    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='comments')
+    build = models.ForeignKey(
+        Build,
+        on_delete=models.CASCADE,
+        related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -206,8 +240,11 @@ class CommentVote(models.Model):
         ('upvote', 'Upvote'),
         ('downvote', 'Downvote'),
     ]
-    
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='votes')
+
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name='votes')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     vote_type = models.CharField(max_length=10, choices=VOTE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -216,4 +253,7 @@ class CommentVote(models.Model):
         unique_together = ['comment', 'user']  # One vote per user per comment
 
     def __str__(self):
-        return f'{self.user.username} {self.vote_type}d comment by {self.comment.user.username}'
+        return f'{
+            self.user.username} {
+            self.vote_type}d comment by {
+            self.comment.user.username}'

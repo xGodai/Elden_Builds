@@ -1,10 +1,10 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
 from .models import UserProfile
-from .forms import UserRegistrationForm, UserUpdateForm, UserProfileUpdateForm
+from .forms import UserRegistrationForm
 from builds.models import Build, Comment
+
 
 class UserProfileTestCase(TestCase):
     def setUp(self):
@@ -29,7 +29,11 @@ class UserProfileTestCase(TestCase):
 
     def test_profile_view(self):
         """Test that user profile page loads correctly"""
-        response = self.client.get(reverse('user-profile', kwargs={'username': self.user.username}))
+        response = self.client.get(
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': self.user.username}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.user.username)
 
@@ -41,7 +45,7 @@ class UserProfileTestCase(TestCase):
     def test_profile_edit_form(self):
         """Test profile edit form functionality"""
         self.client.login(username='testuser', password='testpass123')
-        
+
         response = self.client.post(reverse('profile-edit'), {
             'first_name': 'Test',
             'last_name': 'User',
@@ -51,13 +55,14 @@ class UserProfileTestCase(TestCase):
             'location': 'Test City',
             'favorite_weapon': 'Bloodhound\'s Fang'
         })
-        
-        self.assertEqual(response.status_code, 302)  # Redirect after successful save
-        
+
+        # Redirect after successful save
+        self.assertEqual(response.status_code, 302)
+
         # Refresh user and profile from database
         self.user.refresh_from_db()
         self.profile.refresh_from_db()
-        
+
         self.assertEqual(self.user.first_name, 'Test')
         self.assertEqual(self.user.email, 'updated@example.com')
         self.assertEqual(self.profile.display_name, 'Test Display Name')
@@ -67,7 +72,7 @@ class UserProfileTestCase(TestCase):
         """Test the get_display_name method"""
         # Should return username when display_name is empty
         self.assertEqual(self.profile.get_display_name(), self.user.username)
-        
+
         # Should return display_name when set
         self.profile.display_name = 'Custom Name'
         self.profile.save()
@@ -85,15 +90,16 @@ class UserProfileTestCase(TestCase):
             talismans='Test Talisman',
             category='PVE'
         )
-        
+
         comment = Comment.objects.create(
             build=build,
             user=self.user,
             content='Test comment'
         )
-        
+
         # Like someone else's build
-        other_user = User.objects.create_user(username='other', password='pass')
+        other_user = User.objects.create_user(
+            username='other', password='pass')
         other_build = Build.objects.create(
             user=other_user,
             title='Other Build',
@@ -104,7 +110,7 @@ class UserProfileTestCase(TestCase):
             category='PVP'
         )
         other_build.liked_by.add(self.user)
-        
+
         self.assertEqual(self.profile.total_builds(), 1)
         self.assertEqual(self.profile.total_comments(), 1)
         self.assertEqual(self.profile.total_liked_builds(), 1)
@@ -112,17 +118,29 @@ class UserProfileTestCase(TestCase):
     def test_profile_tabs(self):
         """Test profile page tabs functionality"""
         # Test builds tab
-        response = self.client.get(reverse('user-profile', kwargs={'username': self.user.username}) + '?tab=builds')
+        response = self.client.get(
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': self.user.username}) + '?tab=builds')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['current_tab'], 'builds')
-        
+
         # Test liked builds tab
-        response = self.client.get(reverse('user-profile', kwargs={'username': self.user.username}) + '?tab=liked')
+        response = self.client.get(
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': self.user.username}) + '?tab=liked')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['current_tab'], 'liked')
-        
+
         # Test comments tab
-        response = self.client.get(reverse('user-profile', kwargs={'username': self.user.username}) + '?tab=comments')
+        response = self.client.get(
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': self.user.username}) + '?tab=comments')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['current_tab'], 'comments')
 
@@ -136,7 +154,7 @@ class UserProfileTestCase(TestCase):
         }
         form = UserRegistrationForm(data=form_data)
         self.assertTrue(form.is_valid())
-        
+
         user = form.save()
         self.assertTrue(hasattr(user, 'profile'))
 
@@ -150,8 +168,10 @@ class UserProfileTestCase(TestCase):
             'password2': 'complexpassword123'
         }
         valid_form = UserRegistrationForm(data=valid_form_data)
-        self.assertTrue(valid_form.is_valid(), "25-character username should be valid")
-        
+        self.assertTrue(
+            valid_form.is_valid(),
+            "25-character username should be valid")
+
         # Test invalid username (26 characters - too long)
         invalid_form_data = {
             'username': 'a' * 26,  # 26 characters - too long
@@ -160,7 +180,9 @@ class UserProfileTestCase(TestCase):
             'password2': 'complexpassword123'
         }
         invalid_form = UserRegistrationForm(data=invalid_form_data)
-        self.assertFalse(invalid_form.is_valid(), "26-character username should be invalid")
+        self.assertFalse(
+            invalid_form.is_valid(),
+            "26-character username should be invalid")
         self.assertIn('username', invalid_form.errors)
 
     def test_get_profile_picture_url(self):
@@ -175,7 +197,8 @@ class UserProfileTestCase(TestCase):
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        # Check that profile picture URL is in the response (accounting for HTML escaping)
+        # Check that profile picture URL is in the response (accounting for
+        # HTML escaping)
         expected_url = self.user.profile.get_profile_picture_url().replace('&', '&amp;')
         self.assertContains(response, expected_url)
         # Check that user's display name is in the navbar
@@ -199,17 +222,30 @@ class UserProfileViewTestCase(TestCase):
     def test_own_profile_context(self):
         """Test that is_own_profile context is set correctly"""
         self.client.login(username='user1', password='password123')
-        
+
         # Viewing own profile
-        response = self.client.get(reverse('user-profile', kwargs={'username': 'user1'}))
+        response = self.client.get(
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': 'user1'}))
         self.assertTrue(response.context['is_own_profile'])
-        
+
         # Viewing someone else's profile
-        response = self.client.get(reverse('user-profile', kwargs={'username': 'user2'}))
+        response = self.client.get(
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': 'user2'}))
         self.assertFalse(response.context['is_own_profile'])
 
     def test_my_profile_redirect(self):
         """Test my-profile URL redirects to user's profile"""
         self.client.login(username='user1', password='password123')
         response = self.client.get(reverse('my-profile'))
-        self.assertRedirects(response, reverse('user-profile', kwargs={'username': 'user1'}))
+        self.assertRedirects(
+            response,
+            reverse(
+                'user-profile',
+                kwargs={
+                    'username': 'user1'}))

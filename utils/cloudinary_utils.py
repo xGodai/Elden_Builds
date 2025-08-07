@@ -1,32 +1,31 @@
 """
 Cloudinary utilities for image transformations and URL generation
 """
-from cloudinary import CloudinaryImage
 from cloudinary.utils import cloudinary_url
 
 
 def get_optimized_image_url(public_id, **transformations):
     """
     Generate an optimized image URL with transformations
-    
+
     Args:
         public_id (str): The Cloudinary public ID of the image
         **transformations: Cloudinary transformation parameters
-    
+
     Returns:
         str: Optimized image URL
     """
     if not public_id:
         return None
-    
+
     default_transformations = {
         'quality': 'auto',
         'fetch_format': 'auto',
     }
-    
+
     # Merge default transformations with custom ones
     all_transformations = {**default_transformations, **transformations}
-    
+
     url, options = cloudinary_url(public_id, **all_transformations)
     return url
 
@@ -34,17 +33,17 @@ def get_optimized_image_url(public_id, **transformations):
 def get_profile_picture_url(cloudinary_field, size=300):
     """
     Get optimized profile picture URL
-    
+
     Args:
         cloudinary_field: CloudinaryField instance
         size (int): Desired size for square crop
-    
+
     Returns:
         str: Optimized profile picture URL
     """
     if not cloudinary_field:
         return None
-    
+
     return get_optimized_image_url(
         cloudinary_field.public_id,
         width=size,
@@ -59,18 +58,18 @@ def get_profile_picture_url(cloudinary_field, size=300):
 def get_build_image_url(cloudinary_field, width=800, height=600):
     """
     Get optimized build image URL
-    
+
     Args:
-        cloudinary_field: CloudinaryField instance  
+        cloudinary_field: CloudinaryField instance
         width (int): Desired width
         height (int): Desired height
-    
+
     Returns:
         str: Optimized build image URL
     """
     if not cloudinary_field:
         return None
-    
+
     return get_optimized_image_url(
         cloudinary_field.public_id,
         width=width,
@@ -83,18 +82,18 @@ def get_build_image_url(cloudinary_field, width=800, height=600):
 def get_thumbnail_url(cloudinary_field, width=300, height=200):
     """
     Get optimized thumbnail URL
-    
+
     Args:
         cloudinary_field: CloudinaryField instance
         width (int): Desired width
         height (int): Desired height
-    
+
     Returns:
         str: Optimized thumbnail URL
     """
     if not cloudinary_field:
         return None
-    
+
     return get_optimized_image_url(
         cloudinary_field.public_id,
         width=width,

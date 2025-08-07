@@ -11,7 +11,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             'maxlength': '25'
         })
     )
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password'].widget.attrs.update({

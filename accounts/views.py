@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from .forms import CustomAuthenticationForm
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -10,7 +10,8 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             # Redirect to 'next' parameter if provided, otherwise home
-            next_url = request.POST.get('next') or request.GET.get('next', 'home')
+            next_url = request.POST.get(
+                'next') or request.GET.get('next', 'home')
             return redirect(next_url)
         else:
             # Form has errors, will be displayed in template
@@ -19,6 +20,7 @@ def login_view(request):
         form = CustomAuthenticationForm()  # For GET requests
 
     return render(request, 'accounts/login.html', {'form': form})
+
 
 def logout_view(request):
     if request.method == 'POST':

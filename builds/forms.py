@@ -6,9 +6,23 @@ from .models import Build, BuildImage, Comment
 class BuildForm(forms.ModelForm):
     class Meta:
         model = Build
-        fields = ['title', 'description', 'weapons', 'armor', 'talismans', 'spells', 'category',
-                 'level', 'vigor', 'mind', 'endurance', 'strength', 'dexterity', 
-                 'intelligence', 'faith', 'arcane']
+        fields = [
+            'title',
+            'description',
+            'weapons',
+            'armor',
+            'talismans',
+            'spells',
+            'category',
+            'level',
+            'vigor',
+            'mind',
+            'endurance',
+            'strength',
+            'dexterity',
+            'intelligence',
+            'faith',
+            'arcane']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -119,19 +133,20 @@ class BuildImageForm(forms.ModelForm):
         if image:
             # Check file size (10MB limit)
             if image.size > 10 * 1024 * 1024:
-                raise forms.ValidationError('Image file too large. Maximum size is 10MB.')
-            
+                raise forms.ValidationError(
+                    'Image file too large. Maximum size is 10MB.')
+
             # Check file format
             if not image.content_type.startswith('image/'):
                 raise forms.ValidationError('File must be an image.')
-        
+
         return image
 
 
 # Formset for handling multiple images
 BuildImageFormSet = inlineformset_factory(
-    Build, 
-    BuildImage, 
+    Build,
+    BuildImage,
     form=BuildImageForm,
     extra=1,
     max_num=3,

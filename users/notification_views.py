@@ -12,7 +12,7 @@ def notification_list(request):
     """Display user's notifications"""
     notifications = Notification.objects.filter(recipient=request.user)
     unread_count = NotificationService.get_unread_count(request.user)
-    
+
     context = {
         'notifications': notifications,
         'unread_count': unread_count,
@@ -25,17 +25,20 @@ def notification_list(request):
 def mark_notification_read(request, notification_id):
     """Mark a specific notification as read"""
     try:
-        notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+        notification = get_object_or_404(
+            Notification,
+            id=notification_id,
+            recipient=request.user)
         notification.mark_as_read()
-        
+
         if request.headers.get('Content-Type') == 'application/json':
             return JsonResponse({'success': True})
-        
+
         return redirect('notification-list')
     except Exception as e:
         if request.headers.get('Content-Type') == 'application/json':
             return JsonResponse({'success': False, 'error': str(e)})
-        
+
         messages.error(request, 'Error marking notification as read.')
         return redirect('notification-list')
 
@@ -47,8 +50,9 @@ def mark_notifications_read(request):
     try:
         notification_ids = request.POST.getlist('notification_ids')
         if notification_ids:
-            NotificationService.mark_notifications_as_read(request.user, notification_ids)
-        
+            NotificationService.mark_notifications_as_read(
+                request.user, notification_ids)
+
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
@@ -60,16 +64,16 @@ def mark_all_notifications_read(request):
     """Mark all notifications as read"""
     try:
         NotificationService.mark_notifications_as_read(request.user)
-        
+
         if request.headers.get('Content-Type') == 'application/json':
             return JsonResponse({'success': True})
-        
+
         messages.success(request, 'All notifications marked as read.')
         return redirect('notification-list')
     except Exception as e:
         if request.headers.get('Content-Type') == 'application/json':
             return JsonResponse({'success': False, 'error': str(e)})
-        
+
         messages.error(request, 'Error marking notifications as read.')
         return redirect('notification-list')
 
@@ -79,24 +83,26 @@ def mark_all_notifications_read(request):
 def delete_notification(request, notification_id):
     """Delete a specific notification"""
     try:
-        success = NotificationService.delete_notification(notification_id, request.user)
-        
+        success = NotificationService.delete_notification(
+            notification_id, request.user)
+
         if success:
             if request.headers.get('Content-Type') == 'application/json':
                 return JsonResponse({'success': True})
-            
+
             messages.success(request, 'Notification deleted.')
         else:
             if request.headers.get('Content-Type') == 'application/json':
-                return JsonResponse({'success': False, 'error': 'Notification not found'})
-            
+                return JsonResponse(
+                    {'success': False, 'error': 'Notification not found'})
+
             messages.error(request, 'Notification not found.')
-        
+
         return redirect('notification-list')
     except Exception as e:
         if request.headers.get('Content-Type') == 'application/json':
             return JsonResponse({'success': False, 'error': str(e)})
-        
+
         messages.error(request, 'Error deleting notification.')
         return redirect('notification-list')
 
