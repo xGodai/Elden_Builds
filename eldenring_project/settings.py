@@ -17,6 +17,7 @@ import os
 import dj_database_url
 from pathlib import Path
 
+# Load environment variables from env.py for local development only
 if os.path.isfile('env.py'):
     import env
 
