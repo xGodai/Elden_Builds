@@ -1,6 +1,9 @@
+
 # Elden Ring Builds Community - Database Schema
 
+
 ## Database Diagram (Text Representation)
+
 
 ```
 ┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
@@ -18,74 +21,78 @@
 │ • is_staff         │     │ • created_at       │     │ • created_at       │  │
 │ • last_login       │     │ • updated_at       │     └─────────────────────┘  │
 └─────────────────────┘     └─────────────────────┘                            │
-         │                                                                     │
-         │                                                                     │
-         │ ┌─────────────────────┐                                            │
-         └►│       Build         │◄───────────────────────────────────────────┘
-           │                     │
-           ├─────────────────────┤
-           │ • id (PK)          │
-           │ • user_id (FK)     │────┐
-           │ • title            │    │
-           │ • description      │    │
-           │ • weapons          │    │
-           │ • armor            │    │
-           │ • talismans        │    │
-           │ • spells           │    │
-           │ • category         │    │
-           │ • created_at       │    │
-           └─────────────────────┘    │
-                    │                 │
-                    │                 │
-                    ▼                 │
-           ┌─────────────────────┐    │
-           │    BuildImage       │    │
-           │                     │    │
-           ├─────────────────────┤    │
-           │ • id (PK)          │    │
-           │ • build_id (FK)    │────┘
-           │ • image            │
-           │ • is_primary       │
-           │ • caption          │
-           │ • uploaded_at      │
-           └─────────────────────┘
-                    │
-                    │
-                    ▼
-           ┌─────────────────────┐
-           │      Comment        │
-           │                     │
-           ├─────────────────────┤
-           │ • id (PK)          │
-           │ • build_id (FK)    │
-           │ • user_id (FK)     │
-           │ • content          │
-           │ • created_at       │
-           │ • updated_at       │
-           └─────────────────────┘
-                    │
-                    │
-                    ▼
-           ┌─────────────────────┐
-           │    CommentVote      │
-           │                     │
-           ├─────────────────────┤
-           │ • id (PK)          │
-           │ • comment_id (FK)  │
-           │ • user_id (FK)     │
-           │ • vote_type        │
-           │ • created_at       │
-           └─────────────────────┘
+             │                                                                     │
+             │                                                                     │
+             │ ┌─────────────────────┐                                            │
+             └►│       Build         │◄───────────────────────────────────────────┘
+                │                     │
+                ├─────────────────────┤
+                │ • id (PK)          │
+                │ • user_id (FK)     │────┐
+                │ • title            │    │
+                │ • description      │    │
+                │ • weapons          │    │
+                │ • armor            │    │
+                │ • talismans        │    │
+                │ • spells           │    │
+                │ • category         │    │
+                │ • created_at       │    │
+                │ • updated_at       │    │
+                │ • views            │    │
+                └─────────────────────┘    │
+                              │                 │
+                              │                 │
+                              ▼                 │
+                ┌─────────────────────┐    │
+                │    BuildImage       │    │
+                │                     │    │
+                ├─────────────────────┤    │
+                │ • id (PK)          │    │
+                │ • build_id (FK)    │────┘
+                │ • image            │
+                │ • is_primary       │
+                │ • caption          │
+                │ • uploaded_at      │
+                └─────────────────────┘
+                              │
+                              │
+                              ▼
+                ┌─────────────────────┐
+                │      Comment        │
+                │                     │
+                ├─────────────────────┤
+                │ • id (PK)          │
+                │ • build_id (FK)    │
+                │ • user_id (FK)     │
+                │ • parent_id (FK)   │
+                │ • content          │
+                │ • created_at       │
+                │ • updated_at       │
+                └─────────────────────┘
+                              │
+                              │
+                              ▼
+                ┌─────────────────────┐
+                │    CommentVote      │
+                │                     │
+                ├─────────────────────┤
+                │ • id (PK)          │
+                │ • comment_id (FK)  │
+                │ • user_id (FK)     │
+                │ • vote_type        │
+                │ • created_at       │
+                └─────────────────────┘
 
-           ┌─────────────────────┐
-           │   Build_liked_by    │
-           │   (Many-to-Many)    │
-           ├─────────────────────┤
-           │ • id (PK)          │
-           │ • build_id (FK)    │
-           │ • user_id (FK)     │
-           └─────────────────────┘
+                ┌─────────────────────┐
+                │   Build_liked_by    │
+                │   (Many-to-Many)    │
+                ├─────────────────────┤
+                │ • id (PK)          │
+                │ • build_id (FK)    │
+                │ • user_id (FK)     │
+                └─────────────────────┘
 ```
+
 
 ## Entity Relationships
 
@@ -104,6 +111,7 @@
    - Core entity representing character builds
    - Contains build details (weapons, armor, talismans, spells)
    - Category classification (PvE, PvP, Both)
+   - Tracks number of views
    - Many-to-Many relationship with User through "liked_by"
 
 4. **BuildImage** (Many-to-One with Build)
@@ -113,7 +121,7 @@
 
 5. **Comment** (Many-to-One with Build and User)
    - User comments on builds
-   - Supports threaded discussions
+   - Supports threaded discussions (self-referential parent_id for replies)
    - Voting system through CommentVote
 
 6. **CommentVote** (Many-to-One with Comment and User)
@@ -125,24 +133,26 @@
    - Links to builds and comments
    - Read/unread status tracking
 
+
 ### Key Relationships
 
 - **User → UserProfile**: One-to-One (Profile extension)
 - **User → Build**: One-to-Many (User creates multiple builds)
 - **User ↔ Build**: Many-to-Many (Users can "grace" multiple builds)
 - **Build → BuildImage**: One-to-Many (Multiple images per build)
-- **Build → Comment**: One-to-Many (Multiple comments per build)
+- **Build → Comment**: One-to-Many (Multiple comments per build, supports threading)
 - **User → Comment**: One-to-Many (User creates multiple comments)
 - **Comment → CommentVote**: One-to-Many (Comments can have multiple votes)
 - **User → CommentVote**: One-to-Many (Users can vote on multiple comments)
 - **User → Notification**: One-to-Many (Users receive multiple notifications)
+
 
 ### Constraints and Business Rules
 
 1. **BuildImage**: Maximum 3 images per build
 2. **CommentVote**: Unique constraint (user + comment)
 3. **Build Grace System**: Many-to-Many relationship for "liked_by"
-4. **Primary Image**: Only one primary image per build
+4. **Primary Image**: Only one primary image per build (is_primary)
 5. **Notification Types**: Limited to predefined types (build_like, build_comment, etc.)
 
 ### Indexes
@@ -151,4 +161,5 @@
 - **Comment**: Ordered by created_at (descending)
 - **BuildImage**: Ordered by is_primary (descending), then uploaded_at
 
-This schema supports the "Grace" system (likes), commenting with voting, image management, user profiles, and real-time notifications - all themed around the Elden Ring universe.
+
+This schema supports the "Grace" system (likes), commenting with voting, threaded discussions, image management, user profiles, build view tracking, and real-time notifications - all themed around the Elden Ring universe.

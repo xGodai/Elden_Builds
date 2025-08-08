@@ -85,6 +85,8 @@
 
 ## UX Design -
 ### WireFrames:
+
+
 ### Color Scheme:
 
 The Elden Ring Builds Community uses a **dark fantasy color palette** that mirrors the atmospheric and mystical aesthetic of the game itself:
@@ -194,6 +196,45 @@ The application integrates with the [Elden Ring Fan API](https://eldenring.fanap
 
 ## Datebase -
 
+![Database Diagram](/readme/database/Database.png)
+
+### Core Entities
+
+1. **User** (Django's built-in User model)
+   - Primary entity for authentication and user management
+   - Extended by UserProfile for additional fields
+
+2. **UserProfile** (One-to-One with User)
+   - Extended user information
+   - Profile customization and notification preferences
+   - Profile pictures stored in Cloudinary
+
+3. **Build** (Many-to-One with User)
+   - Core entity representing character builds
+   - Contains build details (weapons, armor, talismans, spells)
+   - Category classification (PvE, PvP, Both)
+   - Tracks number of views
+   - Many-to-Many relationship with User through "liked_by"
+
+4. **BuildImage** (Many-to-One with Build)
+   - Stores multiple images per build (max 3)
+   - Cloudinary integration for image storage
+   - Primary image designation system
+
+5. **Comment** (Many-to-One with Build and User)
+   - User comments on builds
+   - Supports threaded discussions (self-referential parent_id for replies)
+   - Voting system through CommentVote
+
+6. **CommentVote** (Many-to-One with Comment and User)
+   - Upvote/downvote system for comments
+   - Unique constraint: one vote per user per comment
+
+7. **Notification** (Many-to-One with User)
+   - Real-time notification system
+   - Links to builds and comments
+   - Read/unread status tracking
+
 ## Testing and Validation -
 
 ## AI -
@@ -243,7 +284,7 @@ Planned AI features for upcoming releases:
 - **Natural Language Processing**: For search and content categorization
 
 ### Benefits Achieved:
-- **50% faster development** cycle with AI-assisted coding
+- **faster development** cycle with AI-assisted coding
 - **Improved code quality** through automated suggestions
 - **Enhanced user experience** via intelligent autocomplete
 - **Reduced bugs** through AI-powered code review
