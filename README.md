@@ -14,7 +14,8 @@
 5. [Database](#datebase--)
 6. [Testing](#testing-and-validation--)
 7. [AI](#ai--)
-8. [Acknowledgments](#acknowledgments--)
+8. [Tools](#tools-used)
+9. [Acknowledgments](#acknowledgments--)
 
 ## Features -
 
