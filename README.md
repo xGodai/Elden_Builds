@@ -100,7 +100,23 @@
 
 ### Agile:
 
-[Project Board](https://github.com/users/xGodai/projects/8)
+The development of Elden Ring Builds Community follows **Agile methodologies** to ensure rapid iteration, continuous feedback, and high-quality deliverables. The project is managed using a [GitHub Project Board](https://github.com/users/xGodai/projects/8), which organizes all tasks, features, bugs, and enhancements into clear columns such as Backlog, In Progress, Review, and Done.
+
+#### Agile Practices Used:
+- **User Stories:** All features and improvements are described as user stories, focusing on real user needs and outcomes.
+- **Sprints:** Work is divided into short, focused sprints, allowing for regular releases and quick adaptation to feedback.
+- **Task Breakdown:** Large features are broken down into smaller, actionable tasks for easier tracking and assignment.
+- **Continuous Integration:** Automated testing and linting are run on every pull request to maintain code quality.
+- **Regular Reviews:** Code reviews and sprint retrospectives are held to identify improvements and celebrate progress.
+- **Prioritization:** The board is regularly groomed to prioritize high-impact features and urgent bug fixes.
+
+#### Benefits:
+- **Transparency:** All contributors and stakeholders can see the current status of the project at a glance.
+- **Flexibility:** New features and changes can be quickly incorporated based on community feedback or shifting priorities.
+- **Collaboration:** Agile encourages open communication and collaboration among developers, designers, and testers.
+- **Quality:** Frequent testing and validation ensure that new features do not break existing functionality.
+
+You can view the current roadmap, progress, and upcoming features on the [GitHub Project Board](https://github.com/users/xGodai/projects/8).
 
 ## UX Design -
 
