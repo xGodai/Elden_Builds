@@ -18,6 +18,8 @@
 
 ## Features -
 
+   ![Features](/readme/features.PNG)
+
    ### Grace System:
    The application uses "Grace" instead of traditional "likes" to match Elden Ring's lore, where Grace guides and blesses players on their journey.
 
@@ -90,7 +92,7 @@
 - **Grace-Blessed Terminology**: Custom "Grace" system instead of generic likes
 - **Responsive UI**: Mobile-friendly Bootstrap design with custom styling
 
-### Agile 
+### Agile:
 
 [Project Board](https://github.com/users/xGodai/projects/8)
 
@@ -110,16 +112,22 @@ The Elden Ring Builds Community uses a **dark fantasy color palette** that mirro
 - **Golden Grace (#d4af37)**: Primary accent color representing the game's iconic Grace guidance system
 - **Warm Gold (#ffd700)**: Used for highlights, active states, and important CTAs
 
+![Primary Colors](/readme/Primary%20Colors.png)
+
 #### Secondary Colors:
 - **Muted Silver (#c0c0c0)**: Secondary text and subtle UI elements
 - **Soft Gray (#6c757d)**: Body text and form labels for readability
 - **Dark Gray (#343a40)**: Card borders and subtle separators
+
+![Secondary Colors](/readme/Secondary%20Colors.png)
 
 #### Accent Colors:
 - **Grace Glow (#ffeb3b)**: Hover states and active Grace (like) buttons
 - **Erdtree Amber (#ff8f00)**: Warning states and special notifications
 - **Maiden Blue (#4a90e2)**: Links and informational elements
 - **Crimson Red (#dc3545)**: Error states and delete actions
+
+![Accent Colors](/readme/Accent%20Colors.png)
 
 #### Usage Philosophy:
 The color scheme creates a **sacred and mystical atmosphere** while maintaining excellent readability and accessibility. The golden accents against the dark background evoke the feeling of Grace sites in the game - beacons of light in a dark world, guiding players on their journey.
@@ -249,6 +257,28 @@ The application integrates with the [Elden Ring Fan API](https://eldenring.fanap
    - Read/unread status tracking
 
 ## Testing and Validation -
+
+### Automated Testing
+
+Automated testing is a core part of the development workflow for Elden Ring Builds Community. The project uses the following strategies:
+
+- **Django Unit Tests**: All major models, views, and forms are covered by Django's built-in test framework. To run all tests:
+   ```bash
+   python manage.py test
+   ```
+   This ensures that new changes do not break existing functionality and that all business logic is validated.
+
+- **PEP8 & Linting**: Code style is enforced using automated PEP8 checks and linters (such as flake8 or autopep8). This keeps the codebase clean, readable, and consistent. Example fix command:
+   ```bash
+   python fix_pep8.py
+   ```
+   Linting is run regularly to catch style and syntax issues early.
+
+- **Continuous Integration (CI)**: The project is ready for integration with CI tools (like GitHub Actions or Travis CI) to automatically run tests and lint checks on every push or pull request. This helps maintain code quality and reliability as the project grows.
+
+- **Validation Tools**: HTML, CSS, and accessibility are validated using online tools and browser extensions, with results included in the documentation (see below).
+
+Automated testing and validation help ensure the application is robust, maintainable, and production-ready.
 
 ### Lighthouse
 
