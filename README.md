@@ -6,8 +6,13 @@
 
 ## Index:
 1. [Features](#features)
-2. [UX Design Process](#ux-design-process)
-      - [User Stories](#user-stories)
+2. [User Stories](#user-stories--)
+3. [UX Design](#ux-design--)
+4. [Tech Stack](#tech-stack--)
+5. [Database](#datebase--)
+6. [Testing](#testing-and-validation--)
+7. [AI](#ai--)
+8. [Acknowledgments](#acknowledgments--)
 
 ## Features -
 
@@ -84,8 +89,10 @@
 - **Responsive UI**: Mobile-friendly Bootstrap design with custom styling
 
 ## UX Design -
+
 ### WireFrames:
 
+![Desktop and Mobile WireFrames](/readme/wireframes/wireframes.PNG)
 
 ### Color Scheme:
 
@@ -168,7 +175,7 @@ The font selection creates a **bridge between ancient and modern** - reflecting 
 - **API Integration**: Elden Ring Fan API for autocomplete
 - **Deployment**: Configured for Heroku with Gunicorn and WhiteNoise
 
-## Project Structure -
+### Project Structure -
 
 ```
 Elden_Builds/
@@ -236,6 +243,22 @@ The application integrates with the [Elden Ring Fan API](https://eldenring.fanap
    - Read/unread status tracking
 
 ## Testing and Validation -
+
+### Lighthouse
+
+![Lighthouse Score](/readme/validation/lighthouse%20score.PNG)
+
+### HTML
+
+![HTML Validation](/readme/validation/html%20validator.PNG)
+
+### CSS
+
+![CSS Validation](/readme/validation/css%20validator.PNG)
+
+### PEP8
+
+![PEP8](/readme/validation/pep8%20python.PNG)
 
 ## AI -
 

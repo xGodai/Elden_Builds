@@ -82,11 +82,14 @@ class Build(models.Model):
             if size == 'thumbnail':
                 return get_thumbnail_url(primary_image.image)
             else:
-                size_config = BUILD_SIZES.get(size, BUILD_SIZES['medium'])
+                size_config = BUILD_SIZES.get(
+                    size, BUILD_SIZES['medium']
+                )
                 return get_build_image_url(
                     primary_image.image,
                     size_config['width'],
-                    size_config['height'])
+                    size_config['height']
+                )
 
         # Return default emblem image based on build category
         return self.get_default_image_url()
@@ -98,19 +101,27 @@ class Build(models.Model):
         # Map categories to specific emblems
         category_emblems = {
             # Adventure/PvE themed
-            'PVE': ['s60110_a.png', 's60120_a.png', 's60140_a.png', 's60160_a.png'],
+            'PVE': [
+                's60110_a.png', 's60120_a.png',
+                's60140_a.png', 's60160_a.png'
+            ],
             # Combat/PvP themed
-            'PVP': ['s60200_a.png', 's60210_a.png', 's60230_a.png', 's60270_a.png'],
+            'PVP': [
+                's60200_a.png', 's60210_a.png',
+                's60230_a.png', 's60270_a.png'
+            ],
             # Balanced themed
-            'BOTH': ['s60130_a.png', 's60150_a.png', 's60170_a.png', 's60240_a.png'],
+            'BOTH': [
+                's60130_a.png', 's60150_a.png',
+                's60170_a.png', 's60240_a.png'
+            ],
         }
 
         # Get emblems for current category, fallback to PVE if category not
         # found
         emblems = category_emblems.get(self.category, category_emblems['PVE'])
 
-        # Use build ID to consistently select the same emblem for the same build
-        # This ensures the same build always shows the same default image
+        # Use build ID to select the same emblem for the same build
         emblem_index = self.pk % len(emblems)
         selected_emblem = emblems[emblem_index]
 
