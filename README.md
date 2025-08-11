@@ -2,6 +2,8 @@
 
 ## <center>A Django-based web application for the Elden Ring community to share, discover, and discuss character builds. Users can create detailed build guides, grace (like) their favorites, comment on builds, and connect with fellow Tarnished.</center>
 
+![Image of Home Page](/readme/main%20title.PNG)
+
 ### <center>[Link to the Website](https://elden-builds-85150946427d.herokuapp.com)</center>
 
 ## Index:
