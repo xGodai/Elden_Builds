@@ -98,7 +98,7 @@
 
 ### WireFrames:
 
-![Desktop and Mobile WireFrames](/readme/wireframes/wireframes.PNG)
+[Desktop and Mobile WireFrames](/readme/wireframes/wireframes.PNG)
 
 ### Color Scheme:
 
