@@ -221,6 +221,8 @@ class BuildCreateView(LoginRequiredMixin, CreateView):
 
 
 class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    def handle_no_permission(self):
+        return redirect('home')
     model = Build
     form_class = BuildForm
     template_name = 'builds/build_form.html'
@@ -305,6 +307,8 @@ class BuildUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class BuildDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    def handle_no_permission(self):
+        return redirect('home')
     model = Build
     template_name = 'builds/build_confirm_delete.html'
     success_url = reverse_lazy('build-list')
@@ -379,6 +383,8 @@ class CommentCreateView(LoginRequiredMixin, View):
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    def handle_no_permission(self):
+        return redirect('home')
     model = Comment
     form_class = CommentForm
     template_name = 'builds/comment_form.html'
@@ -395,6 +401,8 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    def handle_no_permission(self):
+        return redirect('home')
     model = Comment
     template_name = 'builds/comment_confirm_delete.html'
 
