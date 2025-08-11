@@ -306,17 +306,46 @@ Automated testing and validation help ensure the application is robust, maintain
 
 ![Lighthouse Score](/readme/validation/lighthouse%20score.PNG)
 
-### HTML
+The application was evaluated using [Google Lighthouse](https://developers.google.com/web/tools/lighthouse), an automated tool for improving the quality of web pages. The Lighthouse audit covers key areas such as **Performance**, **Accessibility**, **Best Practices**, and **SEO**.
+
+- **Performance:** The site loads quickly and efficiently, with optimized images and minimized JavaScript/CSS for a smooth user experience on both desktop and mobile devices.
+- **Accessibility:** The application follows accessibility best practices, including proper color contrast, semantic HTML, and keyboard navigation support, making it usable for all players.
+- **Best Practices:** The codebase adheres to modern web standards, ensuring security, reliability, and maintainability.
+- **SEO:** Pages are structured for discoverability, with appropriate meta tags and content organization to help new users find builds through search engines.
+
+A high Lighthouse score demonstrates the project's commitment to delivering a fast, accessible, and user-friendly experience for the
+
+### HTML Validation
 
 ![HTML Validation](/readme/validation/html%20validator.PNG)
 
-### CSS
+The HTML code for the application was validated using the [W3C Markup Validation Service](https://validator.w3.org/). This tool checks for syntax errors, missing tags, and structural issues in the HTML markup.  
+- **Result:** The site’s HTML passed validation with no critical errors, ensuring semantic structure and cross-browser compatibility.
+- **Benefits:** Clean HTML improves accessibility, SEO, and maintainability, and reduces the risk of rendering issues across different browsers and devices.
+
+---
+
+### CSS Validation
 
 ![CSS Validation](/readme/validation/css%20validator.PNG)
 
-### PEP8
+The CSS was validated using the [W3C CSS Validation Service](https://jigsaw.w3.org/css-validator/). This tool checks for errors, unsupported properties, and best practices in the stylesheet.
+- **Result:** The CSS passed validation with no major errors, confirming that the stylesheets follow modern standards and are compatible with all major browsers.
+- **Benefits:** Valid CSS ensures consistent appearance, faster load times, and easier maintenance.
+
+---
+
+### PEP8 Validation
 
 ![PEP8](/readme/validation/pep8%20python.PNG)
+
+Python code was checked for PEP8 compliance using tools like `flake8` and `autopep8`.  
+- **Result:** The codebase is PEP8-compliant, with all long lines, indentation, and style issues fixed as part of the automated linting process.
+- **Benefits:** Adhering to PEP8 makes the code more readable, maintainable, and less prone to bugs. Automated linting is integrated into the workflow to catch issues early and ensure consistent code quality.
+
+---
+
+These validation steps are part of the continuous integration and quality assurance process, helping to deliver a robust, accessible, and professional
 
 ## AI -
 
