@@ -90,6 +90,10 @@
 - **Grace-Blessed Terminology**: Custom "Grace" system instead of generic likes
 - **Responsive UI**: Mobile-friendly Bootstrap design with custom styling
 
+### Agile 
+
+![Project Board](https://github.com/users/xGodai/projects/8)
+
 ## UX Design -
 
 ### WireFrames:
