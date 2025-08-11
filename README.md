@@ -23,7 +23,7 @@
    ### Grace System:
    The application uses "Grace" instead of traditional "likes" to match Elden Ring's lore, where Grace guides and blesses players on their journey.
 
-   ![Grace](/readme/grace.PNG)
+   ![Grace](/readme/grace%20update.PNG)
 
    ### Smart Autocomplete:
    Powered by the Elden Ring Fan API, the build forms provide intelligent suggestions as you type weapon names, making build creation fast and accurate.
