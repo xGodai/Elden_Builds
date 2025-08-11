@@ -92,13 +92,13 @@
 
 ### Agile 
 
-![Project Board](https://github.com/users/xGodai/projects/8)
+[Project Board](https://github.com/users/xGodai/projects/8)
 
 ## UX Design -
 
 ### WireFrames:
 
-[Desktop and Mobile WireFrames](/readme/wireframes/wireframes.PNG)
+![Desktop and Mobile WireFrames](/readme/wireframes/wireframes.PNG)
 
 ### Color Scheme:
 
