@@ -400,6 +400,32 @@ Planned AI features for upcoming releases:
 - **Reduced bugs** through AI-powered code review
 - **Better documentation** with consistent AI-generated comments
 
+## Tools Used
+
+A variety of industry-standard tools and services were used throughout the development, testing, and deployment of Elden Ring Builds Community:
+
+- **[Django](https://www.djangoproject.com/):** Python web framework for rapid, secure backend development.
+- **[Bootstrap 5](https://getbootstrap.com/):** Frontend CSS framework for responsive and mobile-first design.
+- **[Cloudinary](https://cloudinary.com/):** Cloud-based image storage and transformation service.
+- **[PostgreSQL](https://www.postgresql.org/):** Production-grade relational database.
+- **[SQLite](https://www.sqlite.org/index.html):** Lightweight database for local development.
+- **[Heroku](https://www.heroku.com/):** Cloud platform for app deployment and hosting.
+- **[Gunicorn](https://gunicorn.org/):** Python WSGI HTTP server for running Django in production.
+- **[WhiteNoise](http://whitenoise.evans.io/en/stable/):** Simplified static file serving for Django apps.
+- **[Elden Ring Fan API](https://eldenring.fanapis.com/api):** External API for game data and autocomplete.
+- **[GitHub](https://github.com/):** Source code hosting, version control, and project management.
+- **[GitHub Projects](https://github.com/features/project-management/):** Agile project board for task tracking and sprint planning.
+- **[GitHub Actions](https://github.com/features/actions):** (Optional) For continuous integration and automated testing.
+- **[flake8](https://flake8.pycqa.org/en/latest/):** Python code style and linting tool.
+- **[autopep8](https://pypi.org/project/autopep8/):** Automatic PEP8 code formatter for Python.
+- **[W3C HTML Validator](https://validator.w3.org/):** HTML markup validation.
+- **[W3C CSS Validator](https://jigsaw.w3.org/css-validator/):** CSS stylesheet validation.
+- **[Google Lighthouse](https://developers.google.com/web/tools/lighthouse):** Automated auditing for performance, accessibility, best practices, and SEO.
+- **[VS Code](https://code.visualstudio.com/):** Main code editor and IDE.
+- **[GitHub Copilot](https://github.com/features/copilot):** AI-powered code completion and suggestion tool.
+
+These tools collectively enabled a robust, maintainable, and high-quality application that delivers a seamless experience for Elden Ring players and builders.
+
 ## License -
 
 This project is open source and available under the [MIT License](LICENSE).
@@ -414,3 +440,4 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 *May the Grace guide your builds*
+
