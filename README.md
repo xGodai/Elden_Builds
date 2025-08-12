@@ -13,9 +13,10 @@
 4. [Tech Stack](#tech-stack--)
 5. [Database](#datebase--)
 6. [Testing](#testing-and-validation--)
-7. [AI](#ai--)
-8. [Tools](#tools-used)
-9. [Acknowledgments](#acknowledgments--)
+7. [Deployment](#deployment-process--)
+8. [AI](#ai--)
+9. [Tools](#tools-used)
+10. [Acknowledgments](#acknowledgments--)
 
 ## Features -
 
@@ -348,6 +349,95 @@ Python code was checked for PEP8 compliance using tools like `flake8` and `autop
 
 These validation steps are part of the continuous integration and quality assurance process, helping to deliver a robust, accessible, and professional
 
+## Deployment Process -
+
+The deployment of Elden Ring Builds Community to Heroku is streamlined and well-documented to ensure a smooth transition from local development to production. Below are the step-by-step instructions for setting up and deploying the application:
+
+### 1. Prerequisites
+
+- [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed
+- [Git](https://git-scm.com/) installed
+- A Heroku account
+- Cloudinary account for image storage (if not already set up)
+- PostgreSQL add-on enabled on Heroku
+
+### 2. Environment Variables
+
+Set the following environment variables in your Heroku dashboard or using the CLI:
+- `SECRET_KEY`: Your Django secret key
+- `DEBUG`: Set to `False` for production
+- `ALLOWED_HOSTS`: Your Heroku app domain (e.g., `elden-builds.herokuapp.com`)
+- `CLOUDINARY_URL`: Cloudinary API environment variable
+- `DATABASE_URL`: Provided by Heroku PostgreSQL add-on
+
+### 3. Initial Setup
+
+Clone the repository and install dependencies:
+```bash
+git clone https://github.com/xGodai/Elden_Builds.git
+cd Elden_Builds
+pip install -r requirements.txt
+```
+
+### 4. Heroku App Creation (if not already created)
+
+```bash
+heroku create elden-builds
+```
+
+### 5. Add PostgreSQL and Cloudinary
+
+```bash
+heroku addons:create heroku-postgresql:hobby-dev -a elden-builds
+# Set your Cloudinary environment variable in Heroku dashboard or CLI
+```
+
+### 6. Push Code to Heroku
+
+```bash
+git add .
+git commit -m "Prepare for deployment"
+git push heroku main
+```
+
+### 7. Run Migrations and Collect Static Files
+
+```bash
+heroku run python manage.py migrate -a elden-builds
+heroku run python manage.py collectstatic --noinput -a elden-builds
+```
+
+### 8. Create a Superuser (for admin access)
+
+```bash
+heroku run python manage.py createsuperuser -a elden-builds
+```
+
+### 9. Open the Application
+
+```bash
+heroku open -a elden-builds
+```
+Or visit: [https://elden-builds.herokuapp.com](https://elden-builds.herokuapp.com)
+
+### 10. Additional Management
+
+- **Check logs:**  
+  `heroku logs --tail -a elden-builds`
+- **Run bash on Heroku:**  
+  `heroku run bash -a elden-builds`
+
+---
+
+**Note:**  
+- Ensure all sensitive keys are set as environment variables and not hardcoded.
+- For static/media files, Cloudinary is used for image uploads and WhiteNoise for static file serving.
+- For any changes, repeat steps 6 and 7 to redeploy and migrate as needed.
+
+---
+
+This process ensures your application is securely and reliably deployed to Heroku, with all dependencies and environment variables properly
+
 ## AI -
 
 The Elden Ring Builds Community incorporates **AI-powered features** to enhance user experience and streamline content creation while maintaining authentic community-driven content:
@@ -441,4 +531,5 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 *May the Grace guide your builds*
+
 
